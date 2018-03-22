@@ -1,8 +1,8 @@
 # Birthday Greetings Kata Scala edition
 
-This is the Scala porting of a refactoring exercise by [Matteo Vaccari](http://matteo.vaccari.name/). The original idea behind it is to teach you something about **dependency inversion principle** (DIP) and **dependency injection** (DI). For more info take a look at the [original repository](https://github.com/xpmatteo/birthday-greetings-kata).
+This is the Scala porting of a refactoring exercise by [Matteo Vaccari](http://matteo.vaccari.name/). The original idea behind it is to teach you about **dependency inversion principle** (DIP) and **dependency injection** (DI). For more info take a look at the [original repository](https://github.com/xpmatteo/birthday-greetings-kata).
 
-However the fact that Scala is an _hybrid OOP/FP language_ open the door to another interesting macro refactoring: **from bad imperative OOP style to a good pure FP style**. In order to reach that goal you have to:
+However the fact that Scala is an _hybrid OOP/FP language_ opens the door to another interesting macro refactoring: **from bad imperative style to a pure FP style**. In order to reach that goal you have to:
 - remove mutable variable
 - split responsibility in functions and modules
 - push the I/O at the boundary of the system

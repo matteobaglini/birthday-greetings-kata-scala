@@ -9,5 +9,13 @@ lazy val root = (project in file(".")).
     )),
     name := "birthday-greetings-kata-scala",
     scalafmtOnCompile := true,
-    libraryDependencies += scalaTest % Test
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("public")
+    ),
+    libraryDependencies ++= Seq(
+      javaMail,
+      javaActivation,
+      scalaTest % Test,
+      dumbster % Test
+    )
   )

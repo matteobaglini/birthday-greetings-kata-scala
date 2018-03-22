@@ -15,7 +15,8 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= Seq(
       javaMail,
       javaActivation,
-      scalaTest % Test,
+      miniTest % Test,
       dumbster % Test
-    )
+    ),
+    testFrameworks += new TestFramework("minitest.runner.Framework")
   )

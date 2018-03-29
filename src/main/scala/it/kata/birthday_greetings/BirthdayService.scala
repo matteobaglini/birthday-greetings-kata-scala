@@ -12,7 +12,7 @@ object BirthdayService {
                     smtpPort: Int): Unit = {
 
     val employees = loadEmployees(fileName)
-    val employeesBirthday = filterIsBirthday(employees, xDate)
+    val employeesBirthday = employees.filter(_.isBirthday(xDate))
     sendGreetings(employeesBirthday, smtpHost, smtpPort)
   }
 
@@ -30,11 +30,6 @@ object BirthdayService {
       employees += employee
     }
     employees.toList
-  }
-
-  def filterIsBirthday(employees: List[Employee],
-                       xDate: XDate): List[Employee] = {
-    employees.filter(_.isBirthday(xDate))
   }
 
   def sendGreetings(employees: List[Employee],

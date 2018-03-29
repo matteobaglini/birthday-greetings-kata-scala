@@ -2,10 +2,6 @@ package it.kata.birthday_greetings
 
 import minitest._
 import com.dumbster.smtp._
-import java.io.{BufferedReader, FileReader}
-import java.util.Properties
-import javax.mail.internet.{InternetAddress, MimeMessage}
-import javax.mail.{Message, Session, Transport}
 
 object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555

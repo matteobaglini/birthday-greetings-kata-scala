@@ -13,7 +13,7 @@ object BirthdayService {
 
     val employees = loadEmployees(fileName)
     val employeesBirthday = employees.filter(_.isBirthday(xDate))
-    sendGreetings(employeesBirthday, smtpHost, smtpPort)
+    employeesBirthday.foreach(sendGreetings(_, smtpHost, smtpPort))
   }
 
   def loadEmployees(fileName: String): List[Employee] = {
@@ -32,14 +32,12 @@ object BirthdayService {
     employees.toList
   }
 
-  def sendGreetings(employees: List[Employee],
+  def sendGreetings(employee: Employee,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
-    for (eb <- employees) {
-      val session = buildSession(smtpHost, smtpPort)
-      val msg = buildMessage(eb, session)
-      Transport.send(msg)
-    }
+    val session = buildSession(smtpHost, smtpPort)
+    val msg = buildMessage(employee, session)
+    Transport.send(msg)
   }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {
@@ -49,12 +47,14 @@ object BirthdayService {
     Session.getInstance(props, null)
   }
 
-  private def buildMessage(eb: Employee, session: Session): MimeMessage = {
+  private def buildMessage(employee: Employee,
+                           session: Session): MimeMessage = {
     val msg = new MimeMessage(session)
     msg.setFrom(new InternetAddress("sender@here.com"))
-    msg.setRecipient(Message.RecipientType.TO, new InternetAddress(eb.email))
+    msg.setRecipient(Message.RecipientType.TO,
+                     new InternetAddress(employee.email))
     msg.setSubject("Happy Birthday!")
-    msg.setText(s"Happy Birthday, dear ${eb.firstName}!");
+    msg.setText(s"Happy Birthday, dear ${employee.firstName}!");
     msg
   }
 }

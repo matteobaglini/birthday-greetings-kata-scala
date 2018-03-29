@@ -15,19 +15,7 @@ object BirthdayService {
 
     val employees = loadEmployees(fileName)
     val employeesBirthday = filterIsBirthday(employees, xDate)
-
-    for (eb <- employeesBirthday) {
-      val recipient = eb.email
-      val body = s"Happy Birthday, dear ${eb.firstName}!"
-      val subject = "Happy Birthday!"
-
-      sendMessage(smtpHost,
-                  smtpPort,
-                  "sender@here.com",
-                  subject,
-                  body,
-                  recipient)
-    }
+    sendGreetings(employeesBirthday, smtpHost, smtpPort)
   }
 
   def loadEmployees(fileName: String): List[Employee] = {
@@ -55,6 +43,23 @@ object BirthdayService {
       }
     }
     employeesBirthday.toList
+  }
+
+  def sendGreetings(employees: List[Employee],
+                    smtpHost: String,
+                    smtpPort: Int): Unit = {
+    for (eb <- employees) {
+      val recipient = eb.email
+      val body = s"Happy Birthday, dear ${eb.firstName}!"
+      val subject = "Happy Birthday!"
+
+      sendMessage(smtpHost,
+                  smtpPort,
+                  "sender@here.com",
+                  subject,
+                  body,
+                  recipient)
+    }
   }
 
   private def sendMessage(smtpHost: String,

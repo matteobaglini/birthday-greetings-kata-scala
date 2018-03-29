@@ -10,10 +10,9 @@ object BirthdayService {
                     xDate: XDate,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
-
-    val employees = loadEmployees(fileName)
-    val employeesBirthday = employees.filter(_.isBirthday(xDate))
-    employeesBirthday.foreach(sendGreetings(_, smtpHost, smtpPort))
+    loadEmployees(fileName)
+      .filter(_.isBirthday(xDate))
+      .foreach(sendGreetings(_, smtpHost, smtpPort))
   }
 
   def loadEmployees(fileName: String): List[Employee] = {

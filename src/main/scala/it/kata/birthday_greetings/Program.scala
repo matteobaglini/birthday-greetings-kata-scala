@@ -1,9 +1,16 @@
 package it.kata.birthday_greetings
 
+import Repository._
+import GreetingsNotification._
 import BirthdayService._
 
 object Program {
   def main(args: Array[String]): Unit = {
-    sendGreetings("employee_data.txt", XDate(), "localhost", 25)
+
+    val loadEmployees = buildFileLoadEmployees("employee_data.txt")
+    val sendMessage = buildSmtpSendMessage("localhost", 25)
+    val today = XDate()
+
+    sendGreetings(loadEmployees, sendMessage, today)
   }
 }

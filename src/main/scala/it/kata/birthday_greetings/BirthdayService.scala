@@ -11,6 +11,6 @@ object BirthdayService {
     for {
       e <- loadEmployees(fileName)
       if (e.isBirthday(xDate))
-    } sendMessage(e, smtpHost, smtpPort)
+    } sendMessage(smtpHost, smtpPort, e)
   }
 }

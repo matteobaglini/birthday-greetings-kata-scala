@@ -5,7 +5,7 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
-class BirthdayService {
+object BirthdayService {
   def sendGreetings(fileName: String,
                     xDate: XDate,
                     smtpHost: String,

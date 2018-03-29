@@ -36,7 +36,7 @@ object BirthdayService {
     }
   }
 
-  def loadEmployees(fileName: String): ListBuffer[Employee] = {
+  def loadEmployees(fileName: String): List[Employee] = {
     val employees = new ListBuffer[Employee]
     val in = new BufferedReader(new FileReader(fileName))
     var str = ""
@@ -49,7 +49,7 @@ object BirthdayService {
                               employeeData(3))
       employees += employee
     }
-    employees
+    employees.toList
   }
 
   private def sendMessage(smtpHost: String,

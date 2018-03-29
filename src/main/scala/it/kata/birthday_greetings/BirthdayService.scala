@@ -10,9 +10,10 @@ object BirthdayService {
                     xDate: XDate,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
-    loadEmployees(fileName)
-      .filter(_.isBirthday(xDate))
-      .foreach(sendGreetings(_, smtpHost, smtpPort))
+    for {
+      e <- loadEmployees(fileName)
+      if (e.isBirthday(xDate))
+    } sendGreetings(e, smtpHost, smtpPort)
   }
 
   def loadEmployees(fileName: String): List[Employee] = {

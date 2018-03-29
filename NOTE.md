@@ -1,9 +1,9 @@
 # Solution description
 
-This refactored solution follow a principle design that I like call `plain functionl programming`. The main idea is to model your application mostly with functions and function combinators. During this process try to stay away from introducing one hundred monads for every little aspects just because it's possible to do. Just to be clear, with this design:
+This refactored solution follow a principle design that I like call `plain functionl programming`. The main idea is to model your application mostly with functions and function combinators. During this process try to stay away from introducing one hundred monads for every little aspects just because it's possible to do. Just to be clear, with this design the use of :
 
-- the use one/two monads is :+1:
-- the use of IO[Either[List[A], Option[List[Try[B]]]]] is :-1:
+- one/two monads like List[Option[A]] is :+1:
+- a lot of monads like IO[Either[List[A], Option[List[Try[B]]]]] is :-1:
 
 # Peculiar properties (aka buzzword)
 - Model the non determinism of `loadEmployee` with the `List Monad`.

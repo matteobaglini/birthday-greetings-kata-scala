@@ -8,8 +8,11 @@ object BirthdayService {
                     xDate: XDate,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
+
+    val loadEmployees = buildFileLoadEmployees(fileName)
+
     for {
-      e <- loadEmployees(fileName)
+      e <- loadEmployees()
       if (e.isBirthday(xDate))
     } sendMessage(smtpHost, smtpPort, e)
   }

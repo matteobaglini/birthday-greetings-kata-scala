@@ -4,7 +4,9 @@ import java.io.{BufferedReader, FileReader}
 
 object Repository {
 
-  def loadEmployees(fileName: String): List[Employee] = {
+  type LoadEmployees = () => List[Employee]
+
+  def buildFileLoadEmployees(fileName: String): LoadEmployees = () => {
     val employees = new collection.mutable.ListBuffer[Employee]
     val in = new BufferedReader(new FileReader(fileName))
     var str = ""

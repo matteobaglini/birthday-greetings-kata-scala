@@ -39,36 +39,23 @@ object BirthdayService {
       val recipient = eb.email
       val body = s"Happy Birthday, dear ${eb.firstName}!"
       val subject = "Happy Birthday!"
+      val sender = "sender@here.com"
 
-      sendMessage(smtpHost,
-                  smtpPort,
-                  "sender@here.com",
-                  subject,
-                  body,
-                  recipient)
+      // Create a mail session
+      val props = new Properties
+      props.put("mail.smtp.host", smtpHost)
+      props.put("mail.smtp.port", "" + smtpPort)
+      val session = Session.getInstance(props, null)
+
+      // Construct the message
+      val msg = new MimeMessage(session)
+      msg.setFrom(new InternetAddress(sender))
+      msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient))
+      msg.setSubject(subject)
+      msg.setText(body);
+
+      // Send the message
+      Transport.send(msg)
     }
-  }
-
-  private def sendMessage(smtpHost: String,
-                          smtpPort: Int,
-                          sender: String,
-                          subject: String,
-                          body: String,
-                          recipient: String): Unit = {
-    // Create a mail session
-    val props = new Properties
-    props.put("mail.smtp.host", smtpHost)
-    props.put("mail.smtp.port", "" + smtpPort)
-    val session = Session.getInstance(props, null)
-
-    // Construct the message
-    val msg = new MimeMessage(session)
-    msg.setFrom(new InternetAddress(sender))
-    msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient))
-    msg.setSubject(subject)
-    msg.setText(body);
-
-    // Send the message
-    Transport.send(msg)
   }
 }

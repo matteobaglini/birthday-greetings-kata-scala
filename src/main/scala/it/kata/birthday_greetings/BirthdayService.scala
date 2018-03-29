@@ -5,11 +5,15 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
+import collection.mutable.ListBuffer
+
 object BirthdayService {
   def sendGreetings(fileName: String,
                     xDate: XDate,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
+
+    val employees = new ListBuffer[Employee]
     val in = new BufferedReader(new FileReader(fileName))
     var str = ""
     str = in.readLine // skip header
@@ -19,19 +23,27 @@ object BirthdayService {
                               employeeData(0),
                               employeeData(2),
                               employeeData(3))
+      employees += employee
+    }
 
-      if (employee.isBirthday(xDate)) {
-        val recipient = employee.email
-        val body = s"Happy Birthday, dear ${employee.firstName}!"
-        val subject = "Happy Birthday!"
-
-        sendMessage(smtpHost,
-                    smtpPort,
-                    "sender@here.com",
-                    subject,
-                    body,
-                    recipient)
+    val employeesBirthday = new ListBuffer[Employee]
+    for (e <- employees) {
+      if (e.isBirthday(xDate)) {
+        employeesBirthday += e
       }
+    }
+
+    for (eb <- employeesBirthday) {
+      val recipient = eb.email
+      val body = s"Happy Birthday, dear ${eb.firstName}!"
+      val subject = "Happy Birthday!"
+
+      sendMessage(smtpHost,
+                  smtpPort,
+                  "sender@here.com",
+                  subject,
+                  body,
+                  recipient)
     }
   }
 

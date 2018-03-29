@@ -34,13 +34,7 @@ object BirthdayService {
 
   def filterIsBirthday(employees: List[Employee],
                        xDate: XDate): List[Employee] = {
-    val employeesBirthday = new collection.mutable.ListBuffer[Employee]
-    for (e <- employees) {
-      if (e.isBirthday(xDate)) {
-        employeesBirthday += e
-      }
-    }
-    employeesBirthday.toList
+    employees.filter(_.isBirthday(xDate))
   }
 
   def sendGreetings(employees: List[Employee],

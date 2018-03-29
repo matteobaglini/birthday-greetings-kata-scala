@@ -10,10 +10,11 @@ object BirthdayService {
                     smtpPort: Int): Unit = {
 
     val loadEmployees = buildFileLoadEmployees(fileName)
+    val sendMessage = buildSmtpSendMessage(smtpHost, smtpPort)
 
     for {
       e <- loadEmployees()
       if (e.isBirthday(xDate))
-    } sendMessage(smtpHost, smtpPort, e)
+    } sendMessage(e)
   }
 }

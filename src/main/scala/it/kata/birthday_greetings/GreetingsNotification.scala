@@ -6,11 +6,14 @@ import javax.mail.{Message, Session, Transport}
 
 object GreetingsNotification {
 
-  def sendMessage(smtpHost: String, smtpPort: Int, employee: Employee): Unit = {
-    val session = buildSession(smtpHost, smtpPort)
-    val msg = buildMessage(employee, session)
-    Transport.send(msg)
-  }
+  type SendMessage = Employee => Unit
+
+  def buildSmtpSendMessage(smtpHost: String, smtpPort: Int): SendMessage =
+    employee => {
+      val session = buildSession(smtpHost, smtpPort)
+      val msg = buildMessage(employee, session)
+      Transport.send(msg)
+    }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {
     val props = new Properties

@@ -5,8 +5,6 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
-import collection.mutable.ListBuffer
-
 object BirthdayService {
   def sendGreetings(fileName: String,
                     xDate: XDate,
@@ -19,7 +17,7 @@ object BirthdayService {
   }
 
   def loadEmployees(fileName: String): List[Employee] = {
-    val employees = new ListBuffer[Employee]
+    val employees = new collection.mutable.ListBuffer[Employee]
     val in = new BufferedReader(new FileReader(fileName))
     var str = ""
     str = in.readLine // skip header
@@ -36,7 +34,7 @@ object BirthdayService {
 
   def filterIsBirthday(employees: List[Employee],
                        xDate: XDate): List[Employee] = {
-    val employeesBirthday = new ListBuffer[Employee]
+    val employeesBirthday = new collection.mutable.ListBuffer[Employee]
     for (e <- employees) {
       if (e.isBirthday(xDate)) {
         employeesBirthday += e

@@ -7,7 +7,7 @@ import Repository._
 import GreetingsNotification._
 import BirthdayService._
 
-object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
+object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555
 
   def setup(): SimpleSmtpServer = {

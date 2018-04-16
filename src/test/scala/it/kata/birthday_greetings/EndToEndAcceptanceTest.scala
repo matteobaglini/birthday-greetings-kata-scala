@@ -19,8 +19,9 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will send greetings when its somebody's birthday") { mailServer =>
-    val loadEmployees = buildFileLoadEmployees("employee_data.txt")
-    val sendMessage = buildSmtpSendMessage("localhost", NONSTANDARD_PORT)
+    val loadEmployees = buildFileRepositoy("employee_data.txt")
+    val sendMessage =
+      buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/10/08")
 
     val program = sendGreetings(loadEmployees, sendMessage, today)
@@ -36,8 +37,9 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will not send emails when nobody's birthday") { mailServer =>
-    val loadEmployees = buildFileLoadEmployees("employee_data.txt")
-    val sendMessage = buildSmtpSendMessage("localhost", NONSTANDARD_PORT)
+    val loadEmployees = buildFileRepositoy("employee_data.txt")
+    val sendMessage =
+      buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/01/01")
 
     val program = sendGreetings(loadEmployees, sendMessage, today)

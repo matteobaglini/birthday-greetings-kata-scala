@@ -9,7 +9,7 @@ object Repository {
     def loadEmployees(): IO[List[Employee]]
   }
 
-  def buildFileLoadEmployees(fileName: String): Repository = new Repository {
+  def buildFileRepositoy(fileName: String): Repository = new Repository {
     def loadEmployees(): IO[List[Employee]] = IO {
       val employees = new collection.mutable.ListBuffer[Employee]
       val in = new BufferedReader(new FileReader(fileName))

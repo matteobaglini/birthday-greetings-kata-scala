@@ -11,8 +11,8 @@ object GreetingsNotification {
     def sendMessage(e: Employee): IO[Unit]
   }
 
-  def buildSmtpSendMessage(smtpHost: String,
-                           smtpPort: Int): GreetingsNotification =
+  def buildSmtpGreetingsNotification(smtpHost: String,
+                                     smtpPort: Int): GreetingsNotification =
     new GreetingsNotification {
       def sendMessage(employee: Employee): IO[Unit] = IO {
         val session = buildSession(smtpHost, smtpPort)

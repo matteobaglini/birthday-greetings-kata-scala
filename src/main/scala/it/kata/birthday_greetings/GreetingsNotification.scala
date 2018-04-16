@@ -3,12 +3,18 @@ package it.kata.birthday_greetings
 import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
+
+import cats.instances.list._
+import cats.syntax.traverse._
 import cats.effect.IO
 
 object GreetingsNotification {
 
   trait GreetingsNotification {
     def sendMessage(e: Employee): IO[Unit]
+
+    def sendMessages(es: List[Employee]): IO[Unit] =
+      es.traverse(e => sendMessage(e)).map(_ => ())
   }
 
   def buildSmtpGreetingsNotification(smtpHost: String,

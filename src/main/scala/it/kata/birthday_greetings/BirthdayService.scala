@@ -1,7 +1,5 @@
 package it.kata.birthday_greetings
 
-import cats.instances.list._
-import cats.syntax.traverse._
 import cats.effect.IO
 
 import Repository._
@@ -16,6 +14,6 @@ object BirthdayService {
     repository
       .loadEmployees()
       .map(es => es.filter(e => e.isBirthday(today)))
-      .flatMap(bs => bs.traverse(e => notification.sendMessage(e)).map(_ => ()))
+      .flatMap(bs => notification.sendMessages(bs))
   }
 }

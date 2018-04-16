@@ -17,7 +17,8 @@ object AcceptanceTest extends SimpleTestSuite {
     val stubSendMessage: SendMessage = e => { receivers += e; IO.unit }
     val today = XDate("2008/10/08")
 
-    sendGreetings(stubLoadEmployees, stubSendMessage, today)
+    val program = sendGreetings(stubLoadEmployees, stubSendMessage, today)
+    program.unsafeRunSync()
 
     assert(receivers.size == 1, "message not sent?")
     assert(receivers.contains(employee), "to wrong employee?")
@@ -31,7 +32,8 @@ object AcceptanceTest extends SimpleTestSuite {
     val stubSendMessage: SendMessage = e => { receivers += e; IO.unit }
     val today = XDate("2008/01/01")
 
-    sendGreetings(stubLoadEmployees, stubSendMessage, today)
+    val program = sendGreetings(stubLoadEmployees, stubSendMessage, today)
+    program.unsafeRunSync()
 
     assert(receivers.size == 0, "what? messages?")
   }

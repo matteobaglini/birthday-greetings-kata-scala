@@ -11,6 +11,7 @@ object Program {
     val sendMessage = buildSmtpSendMessage("localhost", 25)
     val today = XDate()
 
-    sendGreetings(loadEmployees, sendMessage, today)
+    val program = sendGreetings(loadEmployees, sendMessage, today)
+    program.unsafeRunSync()
   }
 }

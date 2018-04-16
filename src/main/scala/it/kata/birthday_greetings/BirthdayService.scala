@@ -8,13 +8,13 @@ import Repository._
 import GreetingsNotification._
 
 object BirthdayService {
+
   def sendGreetings(loadEmployees: LoadEmployees,
                     sendMessage: SendMessage,
-                    today: XDate): Unit = {
+                    today: XDate): IO[Unit] = {
 
     loadEmployees()
       .map(es => es.filter(e => e.isBirthday(today)))
       .flatMap(bs => bs.traverse(e => sendMessage(e)).map(_ => ()))
-      .unsafeRunSync()
   }
 }

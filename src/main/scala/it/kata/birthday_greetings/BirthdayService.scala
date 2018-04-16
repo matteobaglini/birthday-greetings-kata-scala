@@ -16,10 +16,10 @@ object BirthdayService {
       loadEmployees()
         .map(es => es.filter(e => e.isBirthday(today)))
 
-    val collapsedSendAllIO: IO[IO[Unit]] =
-      birthdaysIO.map(birthdays =>
+    val collapsedSendAllIO: IO[Unit] =
+      birthdaysIO.flatMap(birthdays =>
         birthdays.traverse(e => sendMessage(e)).map(_ => ()))
 
-    collapsedSendAllIO.unsafeRunSync().unsafeRunSync()
+    collapsedSendAllIO.unsafeRunSync()
   }
 }

@@ -8,10 +8,10 @@ object Program {
   def main(args: Array[String]): Unit = {
 
     val repository = buildFileLoadEmployees("employee_data.txt")
-    val sendMessage = buildSmtpSendMessage("localhost", 25)
+    val greetingsNotification = buildSmtpSendMessage("localhost", 25)
     val today = XDate()
 
-    val program = sendGreetings(repository, sendMessage, today)
+    val program = sendGreetings(repository, greetingsNotification, today)
     program.unsafeRunSync()
   }
 }

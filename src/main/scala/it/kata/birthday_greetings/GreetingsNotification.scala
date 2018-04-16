@@ -7,14 +7,18 @@ import cats.effect.IO
 
 object GreetingsNotification {
 
-  type SendMessage = Employee => IO[Unit]
+  trait GreetingsNotification {
+    def sendMessage(e: Employee): IO[Unit]
+  }
 
-  def buildSmtpSendMessage(smtpHost: String, smtpPort: Int): SendMessage =
-    employee =>
-      IO {
+  def buildSmtpSendMessage(smtpHost: String,
+                           smtpPort: Int): GreetingsNotification =
+    new GreetingsNotification {
+      def sendMessage(employee: Employee): IO[Unit] = IO {
         val session = buildSession(smtpHost, smtpPort)
         val msg = buildMessage(employee, session)
         Transport.send(msg)
+      }
     }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

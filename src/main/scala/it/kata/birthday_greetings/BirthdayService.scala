@@ -10,12 +10,12 @@ import GreetingsNotification._
 object BirthdayService {
 
   def sendGreetings(repository: Repository,
-                    sendMessage: SendMessage,
+                    notification: GreetingsNotification,
                     today: XDate): IO[Unit] = {
 
     repository
       .loadEmployees()
       .map(es => es.filter(e => e.isBirthday(today)))
-      .flatMap(bs => bs.traverse(e => sendMessage(e)).map(_ => ()))
+      .flatMap(bs => bs.traverse(e => notification.sendMessage(e)).map(_ => ()))
   }
 }

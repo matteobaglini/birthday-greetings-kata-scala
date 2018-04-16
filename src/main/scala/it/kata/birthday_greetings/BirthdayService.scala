@@ -10,6 +10,6 @@ object BirthdayService {
     for {
       e <- loadEmployees().unsafeRunSync()
       if (e.isBirthday(today))
-    } sendMessage(e)
+    } sendMessage(e).unsafeRunSync()
   }
 }

@@ -14,7 +14,7 @@ object AcceptanceTest extends SimpleTestSuite {
     val stubLoadEmployees: LoadEmployees = () => IO.pure(List(employee))
 
     val receivers = new collection.mutable.ListBuffer[Employee]
-    val stubSendMessage: SendMessage = e => receivers += e
+    val stubSendMessage: SendMessage = e => { receivers += e; IO.unit }
     val today = XDate("2008/10/08")
 
     sendGreetings(stubLoadEmployees, stubSendMessage, today)
@@ -28,7 +28,7 @@ object AcceptanceTest extends SimpleTestSuite {
     val stubLoadEmployees: LoadEmployees = () => IO.pure(List(employee))
 
     val receivers = new collection.mutable.ListBuffer[Employee]
-    val stubSendMessage: SendMessage = e => receivers += e
+    val stubSendMessage: SendMessage = e => { receivers += e; IO.unit }
     val today = XDate("2008/01/01")
 
     sendGreetings(stubLoadEmployees, stubSendMessage, today)

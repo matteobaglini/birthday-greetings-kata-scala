@@ -3,16 +3,18 @@ package it.kata.birthday_greetings
 import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
+import cats.effect.IO
 
 object GreetingsNotification {
 
-  type SendMessage = Employee => Unit
+  type SendMessage = Employee => IO[Unit]
 
   def buildSmtpSendMessage(smtpHost: String, smtpPort: Int): SendMessage =
-    employee => {
-      val session = buildSession(smtpHost, smtpPort)
-      val msg = buildMessage(employee, session)
-      Transport.send(msg)
+    employee =>
+      IO {
+        val session = buildSession(smtpHost, smtpPort)
+        val msg = buildMessage(employee, session)
+        Transport.send(msg)
     }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

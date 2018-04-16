@@ -1,5 +1,7 @@
 package it.kata.birthday_greetings
 
+import cats.instances.list._
+import cats.syntax.traverse._
 import cats.effect.IO
 
 import Repository._
@@ -14,11 +16,9 @@ object BirthdayService {
 
     val birthdays: List[Employee] = es.filter(e => e.isBirthday(today))
 
-    val sendAllIO: List[IO[Unit]] = birthdays.map(e => {
-      val sendIO: IO[Unit] = sendMessage(e)
-      sendIO
-    })
+    val collapsedSendAllIO: IO[List[Unit]] =
+      birthdays.traverse(e => sendMessage(e))
 
-    sendAllIO.foreach(_.unsafeRunSync())
+    collapsedSendAllIO.unsafeRunSync()
   }
 }

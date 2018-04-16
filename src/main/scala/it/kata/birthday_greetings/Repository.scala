@@ -1,24 +1,27 @@
 package it.kata.birthday_greetings
 
 import java.io.{BufferedReader, FileReader}
+import cats.effect.IO
 
 object Repository {
 
-  type LoadEmployees = () => List[Employee]
+  type LoadEmployees = () => IO[List[Employee]]
 
-  def buildFileLoadEmployees(fileName: String): LoadEmployees = () => {
-    val employees = new collection.mutable.ListBuffer[Employee]
-    val in = new BufferedReader(new FileReader(fileName))
-    var str = ""
-    str = in.readLine // skip header
-    while ({ str = in.readLine; str != null }) {
-      val employeeData = str.split(", ")
-      val employee = Employee(employeeData(1),
-                              employeeData(0),
-                              employeeData(2),
-                              employeeData(3))
-      employees += employee
+  def buildFileLoadEmployees(fileName: String): LoadEmployees =
+    () =>
+      IO {
+        val employees = new collection.mutable.ListBuffer[Employee]
+        val in = new BufferedReader(new FileReader(fileName))
+        var str = ""
+        str = in.readLine // skip header
+        while ({ str = in.readLine; str != null }) {
+          val employeeData = str.split(", ")
+          val employee = Employee(employeeData(1),
+                                  employeeData(0),
+                                  employeeData(2),
+                                  employeeData(3))
+          employees += employee
+        }
+        employees.toList
     }
-    employees.toList
-  }
 }

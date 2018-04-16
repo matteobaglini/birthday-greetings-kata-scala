@@ -8,7 +8,7 @@ object BirthdayService {
                     sendMessage: SendMessage,
                     today: XDate): Unit = {
     for {
-      e <- loadEmployees()
+      e <- loadEmployees().unsafeRunSync()
       if (e.isBirthday(today))
     } sendMessage(e)
   }

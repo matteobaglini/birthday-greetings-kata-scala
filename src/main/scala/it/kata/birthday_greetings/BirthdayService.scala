@@ -12,10 +12,9 @@ object BirthdayService {
                     sendMessage: SendMessage,
                     today: XDate): Unit = {
 
-    val loadIO: IO[List[Employee]] = loadEmployees()
-
     val birthdaysIO: IO[List[Employee]] =
-      loadIO.map(es => es.filter(e => e.isBirthday(today)))
+      loadEmployees()
+        .map(es => es.filter(e => e.isBirthday(today)))
     val birthdays: List[Employee] = birthdaysIO.unsafeRunSync()
 
     val collapsedSendAllIO: IO[Unit] =

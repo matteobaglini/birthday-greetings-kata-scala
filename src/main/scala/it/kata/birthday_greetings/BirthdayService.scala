@@ -14,12 +14,11 @@ object BirthdayService {
 
     val birthdays: List[Employee] = es.filter(e => e.isBirthday(today))
 
-    val result: Unit = birthdays.foreach(e => {
+    val sendAllIO: List[IO[Unit]] = birthdays.map(e => {
       val sendIO: IO[Unit] = sendMessage(e)
-      val noop: Unit = sendIO.unsafeRunSync()
-      noop
+      sendIO
     })
 
-    result
+    sendAllIO.foreach(_.unsafeRunSync())
   }
 }

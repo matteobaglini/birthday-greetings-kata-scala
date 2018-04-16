@@ -9,11 +9,12 @@ import GreetingsNotification._
 
 object BirthdayService {
 
-  def sendGreetings(loadEmployees: LoadEmployees,
+  def sendGreetings(repository: Repository,
                     sendMessage: SendMessage,
                     today: XDate): IO[Unit] = {
 
-    loadEmployees()
+    repository
+      .loadEmployees()
       .map(es => es.filter(e => e.isBirthday(today)))
       .flatMap(bs => bs.traverse(e => sendMessage(e)).map(_ => ()))
   }

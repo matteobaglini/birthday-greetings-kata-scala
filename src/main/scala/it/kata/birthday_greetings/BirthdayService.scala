@@ -7,9 +7,9 @@ object BirthdayService {
   def sendGreetings(loadEmployees: LoadEmployees,
                     sendMessage: SendMessage,
                     today: XDate): Unit = {
-    for {
-      e <- loadEmployees().unsafeRunSync()
-      if (e.isBirthday(today))
-    } sendMessage(e).unsafeRunSync()
+    loadEmployees()
+      .unsafeRunSync()
+      .filter(e => e.isBirthday(today))
+      .foreach(e => sendMessage(e).unsafeRunSync())
   }
 }

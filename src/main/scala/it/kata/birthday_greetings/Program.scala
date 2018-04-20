@@ -11,7 +11,7 @@ object Program {
 
     implicit val repository = buildFileRepositoy[IO]("employee_data.txt")
     implicit val greetingsNotification =
-      buildSmtpGreetingsNotification("localhost", 25)
+      buildSmtpGreetingsNotification[IO]("localhost", 25)
 
     val today = XDate()
     val program = sendGreetings[IO](today)

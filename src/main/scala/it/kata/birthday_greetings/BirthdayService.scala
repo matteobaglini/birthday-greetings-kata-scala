@@ -1,15 +1,16 @@
 package it.kata.birthday_greetings
 
-import cats.effect.IO
+import cats._
+import cats.implicits._
 
 import Repository._
 import GreetingsNotification._
 
 object BirthdayService {
 
-  def sendGreetings(today: XDate)(
-      implicit repository: EmployeeRepository[IO],
-      notification: GreetingsNotification[IO]): IO[Unit] = {
+  def sendGreetings[F[_]: Monad](today: XDate)(
+      implicit repository: EmployeeRepository[F],
+      notification: GreetingsNotification[F]): F[Unit] = {
 
     repository
       .loadEmployees()

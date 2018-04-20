@@ -2,6 +2,7 @@ package it.kata.birthday_greetings
 
 import minitest._
 import com.dumbster.smtp._
+import cats.effect.IO
 
 import Repository._
 import GreetingsNotification._
@@ -24,7 +25,7 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/10/08")
 
-    val program = sendGreetings(today)
+    val program = sendGreetings[IO](today)
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
@@ -42,7 +43,7 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/01/01")
 
-    val program = sendGreetings(today)
+    val program = sendGreetings[IO](today)
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")

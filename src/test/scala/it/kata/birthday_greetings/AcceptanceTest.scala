@@ -30,7 +30,7 @@ object AcceptanceTest extends SimpleTestSuite {
     implicit val mockGreetingsNotification = new MockGreetingsNotification()
     val today = XDate("2008/10/08")
 
-    val program = sendGreetings(today)
+    val program = sendGreetings[IO](today)
     program.unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 1, "message not sent?")
@@ -44,7 +44,7 @@ object AcceptanceTest extends SimpleTestSuite {
     implicit val mockGreetingsNotification = new MockGreetingsNotification()
     val today = XDate("2008/01/01")
 
-    val program = sendGreetings(today)
+    val program = sendGreetings[IO](today)
     program.unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 0, "what? messages?")

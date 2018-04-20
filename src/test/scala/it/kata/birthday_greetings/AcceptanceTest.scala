@@ -20,6 +20,9 @@ object AcceptanceTest extends SimpleTestSuite {
 
     def sendMessage(e: Employee): Unit =
       receivers += e
+
+    def sendMessages(es: List[Employee]): Unit =
+      receivers ++= es
   }
 
   test("will send greetings when its somebody's birthday") {

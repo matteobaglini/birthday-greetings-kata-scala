@@ -4,17 +4,15 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
-import cats._
-import cats.implicits._
 import cats.effect.IO
+import fs2.Stream
 
 object GreetingsNotification {
 
   trait GreetingsNotification[F[_]] {
     def sendMessage(e: Employee): F[Unit]
 
-    def sendMessages(es: List[Employee])(implicit A: Applicative[F]): F[Unit] =
-      Traverse[List].traverse(es)(e => sendMessage(e)).map(_ => ())
+    def sendMessages(es: List[Employee]): F[Unit]
   }
 
   def buildSmtpGreetingsNotification(smtpHost: String,
@@ -25,6 +23,9 @@ object GreetingsNotification {
         val msg = buildMessage(employee, session)
         Transport.send(msg)
       }
+
+      def sendMessages(es: List[Employee]): IO[Unit] =
+        Stream.emits(es).flatMap(e => Stream.eval(sendMessage(e))).compile.drain
     }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

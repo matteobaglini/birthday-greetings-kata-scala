@@ -19,8 +19,10 @@ object AcceptanceTest extends SimpleTestSuite {
 
     val receivers = new collection.mutable.ListBuffer[Employee]
 
-    def sendMessage(e: Employee): IO[Unit] =
-      IO(receivers += e)
+    def sendMessage(e: Employee): Stream[IO, Unit] = {
+      receivers += e
+      Stream.eval(IO.unit)
+    }
   }
 
   test("will send greetings when its somebody's birthday") {

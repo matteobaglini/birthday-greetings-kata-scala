@@ -3,7 +3,6 @@ package it.kata.birthday_greetings
 import cats._
 import cats.implicits._
 import cats.effect.Sync
-import fs2.Stream
 
 import Repository._
 import GreetingsNotification._
@@ -18,7 +17,7 @@ object BirthdayService {
     repository
       .loadEmployees()
       .filter(e => e.isBirthday(today))
-      .flatMap(e => Stream.eval(notification.sendMessage(e)))
+      .flatMap(e => notification.sendMessage(e))
       .compile
       .drain
   }

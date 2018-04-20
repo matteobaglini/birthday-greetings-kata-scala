@@ -16,8 +16,8 @@ object BirthdayService {
 
     repository
       .loadEmployees()
-      .filter(e => e.isBirthday(today))
-      .flatMap(e => notification.sendMessage(e))
+      .filter(_.isBirthday(today))
+      .flatMap(notification.sendMessage(_))
       .compile
       .drain
   }

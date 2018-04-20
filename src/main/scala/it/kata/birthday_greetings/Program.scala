@@ -11,7 +11,7 @@ object Program {
     val greetingsNotification = buildSmtpGreetingsNotification("localhost", 25)
     val today = XDate()
 
-    val program = sendGreetings(repository, greetingsNotification, today)
+    val program = sendGreetings(today)(repository, greetingsNotification)
     program.unsafeRunSync()
   }
 }

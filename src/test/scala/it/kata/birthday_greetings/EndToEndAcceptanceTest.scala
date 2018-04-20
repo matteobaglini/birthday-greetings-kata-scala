@@ -24,7 +24,7 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/10/08")
 
-    val program = sendGreetings(loadEmployees, sendMessage, today)
+    val program = sendGreetings(today)(loadEmployees, sendMessage)
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
@@ -42,7 +42,7 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/01/01")
 
-    val program = sendGreetings(loadEmployees, sendMessage, today)
+    val program = sendGreetings(today)(loadEmployees, sendMessage)
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")

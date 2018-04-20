@@ -31,7 +31,7 @@ object AcceptanceTest extends SimpleTestSuite {
     val today = XDate("2008/10/08")
 
     val program =
-      sendGreetings(stubRepository, mockGreetingsNotification, today)
+      sendGreetings(today)(stubRepository, mockGreetingsNotification)
     program.unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 1, "message not sent?")
@@ -46,7 +46,7 @@ object AcceptanceTest extends SimpleTestSuite {
     val today = XDate("2008/01/01")
 
     val program =
-      sendGreetings(stubRepository, mockGreetingsNotification, today)
+      sendGreetings(today)(stubRepository, mockGreetingsNotification)
     program.unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 0, "what? messages?")

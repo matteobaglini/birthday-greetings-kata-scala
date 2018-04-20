@@ -9,13 +9,13 @@ import BirthdayService._
 
 object AcceptanceTest extends SimpleTestSuite {
 
-  class StubRepository(es: List[Employee]) extends EmployeeRepository {
+  class StubRepository(es: List[Employee]) extends EmployeeRepository[IO] {
     def loadEmployees(): IO[List[Employee]] = IO {
       es
     }
   }
 
-  class MockGreetingsNotification extends GreetingsNotification {
+  class MockGreetingsNotification extends GreetingsNotification[IO] {
 
     val receivers = new collection.mutable.ListBuffer[Employee]
 

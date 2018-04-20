@@ -5,12 +5,12 @@ import cats.effect.IO
 
 object Repository {
 
-  trait EmployeeRepository {
+  trait EmployeeRepository[F[_]] {
     def loadEmployees(): IO[List[Employee]]
   }
 
-  def buildFileRepositoy(fileName: String): EmployeeRepository =
-    new EmployeeRepository {
+  def buildFileRepositoy(fileName: String): EmployeeRepository[IO] =
+    new EmployeeRepository[IO] {
       def loadEmployees(): IO[List[Employee]] = IO {
         val employees = new collection.mutable.ListBuffer[Employee]
         val in = new BufferedReader(new FileReader(fileName))

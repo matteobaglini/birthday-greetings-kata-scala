@@ -10,7 +10,7 @@ import cats.effect.IO
 
 object GreetingsNotification {
 
-  trait GreetingsNotification {
+  trait GreetingsNotification[F[_]] {
     def sendMessage(e: Employee): IO[Unit]
 
     def sendMessages(es: List[Employee]): IO[Unit] =
@@ -18,8 +18,8 @@ object GreetingsNotification {
   }
 
   def buildSmtpGreetingsNotification(smtpHost: String,
-                                     smtpPort: Int): GreetingsNotification =
-    new GreetingsNotification {
+                                     smtpPort: Int): GreetingsNotification[IO] =
+    new GreetingsNotification[IO] {
       def sendMessage(employee: Employee): IO[Unit] = IO {
         val session = buildSession(smtpHost, smtpPort)
         val msg = buildMessage(employee, session)

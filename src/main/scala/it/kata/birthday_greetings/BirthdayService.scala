@@ -8,8 +8,8 @@ import GreetingsNotification._
 object BirthdayService {
 
   def sendGreetings(today: XDate)(
-      implicit repository: EmployeeRepository,
-      notification: GreetingsNotification): IO[Unit] = {
+      implicit repository: EmployeeRepository[IO],
+      notification: GreetingsNotification[IO]): IO[Unit] = {
 
     repository
       .loadEmployees()

@@ -1,7 +1,8 @@
 package it.kata.birthday_greetings
 
 import minitest._
-import cats.Id
+import cats.effect.IO
+import fs2.Stream
 
 import Repository._
 import GreetingsNotification._
@@ -9,20 +10,17 @@ import BirthdayService._
 
 object AcceptanceTest extends SimpleTestSuite {
 
-  class StubRepository(es: List[Employee]) extends EmployeeRepository[Id] {
-    def loadEmployees(): List[Employee] =
-      es
+  class StubRepository(es: List[Employee]) extends EmployeeRepository[IO] {
+    def loadEmployees(): Stream[IO, Employee] =
+      Stream.emits(es).flatMap(n => Stream.eval(IO(n)))
   }
 
-  class MockGreetingsNotification extends GreetingsNotification[Id] {
+  class MockGreetingsNotification extends GreetingsNotification[IO] {
 
     val receivers = new collection.mutable.ListBuffer[Employee]
 
-    def sendMessage(e: Employee): Unit =
-      receivers += e
-
-    def sendMessages(es: List[Employee]): Unit =
-      receivers ++= es
+    def sendMessage(e: Employee): IO[Unit] =
+      IO(receivers += e)
   }
 
   test("will send greetings when its somebody's birthday") {
@@ -31,7 +29,7 @@ object AcceptanceTest extends SimpleTestSuite {
     implicit val mockGreetingsNotification = new MockGreetingsNotification()
     val today = XDate("2008/10/08")
 
-    sendGreetings[Id](today)
+    sendGreetings[IO](today).unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 1, "message not sent?")
     assert(mockGreetingsNotification.receivers.contains(employee),
@@ -44,7 +42,7 @@ object AcceptanceTest extends SimpleTestSuite {
     implicit val mockGreetingsNotification = new MockGreetingsNotification()
     val today = XDate("2008/01/01")
 
-    sendGreetings[Id](today)
+    sendGreetings[IO](today).unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 0, "what? messages?")
   }

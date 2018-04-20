@@ -5,14 +5,11 @@ import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
 import cats.effect.Sync
-import fs2.Stream
 
 object GreetingsNotification {
 
   trait GreetingsNotification[F[_]] {
     def sendMessage(e: Employee): F[Unit]
-
-    def sendMessages(es: List[Employee]): F[Unit]
   }
 
   def buildSmtpGreetingsNotification[F[_]](smtpHost: String, smtpPort: Int)(
@@ -23,9 +20,6 @@ object GreetingsNotification {
         val msg = buildMessage(employee, session)
         Transport.send(msg)
       }
-
-      def sendMessages(es: List[Employee]): F[Unit] =
-        Stream.emits(es).flatMap(e => Stream.eval(sendMessage(e))).compile.drain
     }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

@@ -1,7 +1,8 @@
 package it.kata.birthday_greetings
 
-import java.io.{BufferedReader, FileReader}
+import java.nio.file.Paths
 import cats.effect.IO
+import fs2.{io, text}
 
 object Repository {
 
@@ -11,20 +12,15 @@ object Repository {
 
   def buildFileRepositoy(fileName: String): EmployeeRepository[IO] =
     new EmployeeRepository[IO] {
-      def loadEmployees(): IO[List[Employee]] = IO {
-        val employees = new collection.mutable.ListBuffer[Employee]
-        val in = new BufferedReader(new FileReader(fileName))
-        var str = ""
-        str = in.readLine // skip header
-        while ({ str = in.readLine; str != null }) {
-          val employeeData = str.split(", ")
-          val employee = Employee(employeeData(1),
-                                  employeeData(0),
-                                  employeeData(2),
-                                  employeeData(3))
-          employees += employee
-        }
-        employees.toList
-      }
+      def loadEmployees(): IO[List[Employee]] =
+        io.file
+          .readAll[IO](Paths.get(fileName), 4096)
+          .through(text.utf8Decode)
+          .through(text.lines)
+          .drop(1) // skip header
+          .map(line => line.split(", "))
+          .map(data => Employee(data(1), data(0), data(2), data(3)))
+          .compile
+          .toList
     }
 }

@@ -27,6 +27,8 @@ lazy val root = (project in file(".")).
       javaActivation,
       catsCore,
       catsEffect,
+      fs2,
+      fs2io,
       miniTest % Test,
       dumbster % Test
     ),

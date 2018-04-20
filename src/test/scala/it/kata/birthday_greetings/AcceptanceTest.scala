@@ -26,12 +26,11 @@ object AcceptanceTest extends SimpleTestSuite {
 
   test("will send greetings when its somebody's birthday") {
     val employee = Employee("aldo", "raine", "1900/10/08", "a@b.com")
-    val stubRepository = new StubRepository(List(employee))
-    val mockGreetingsNotification = new MockGreetingsNotification()
+    implicit val stubRepository = new StubRepository(List(employee))
+    implicit val mockGreetingsNotification = new MockGreetingsNotification()
     val today = XDate("2008/10/08")
 
-    val program =
-      sendGreetings(today)(stubRepository, mockGreetingsNotification)
+    val program = sendGreetings(today)
     program.unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 1, "message not sent?")
@@ -41,12 +40,11 @@ object AcceptanceTest extends SimpleTestSuite {
 
   test("will not send emails when nobody's birthday") {
     val employee = Employee("aldo", "raine", "1900/10/08", "a@b.com")
-    val stubRepository = new StubRepository(List(employee))
-    val mockGreetingsNotification = new MockGreetingsNotification()
+    implicit val stubRepository = new StubRepository(List(employee))
+    implicit val mockGreetingsNotification = new MockGreetingsNotification()
     val today = XDate("2008/01/01")
 
-    val program =
-      sendGreetings(today)(stubRepository, mockGreetingsNotification)
+    val program = sendGreetings(today)
     program.unsafeRunSync()
 
     assert(mockGreetingsNotification.receivers.size == 0, "what? messages?")

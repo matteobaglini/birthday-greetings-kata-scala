@@ -7,11 +7,12 @@ import BirthdayService._
 object Program {
   def main(args: Array[String]): Unit = {
 
-    val repository = buildFileRepositoy("employee_data.txt")
-    val greetingsNotification = buildSmtpGreetingsNotification("localhost", 25)
+    implicit val repository = buildFileRepositoy("employee_data.txt")
+    implicit val greetingsNotification =
+      buildSmtpGreetingsNotification("localhost", 25)
     val today = XDate()
 
-    val program = sendGreetings(today)(repository, greetingsNotification)
+    val program = sendGreetings(today)
     program.unsafeRunSync()
   }
 }

@@ -7,7 +7,7 @@ import GreetingsNotification._
 
 object BirthdayService {
 
-  def sendGreetings(repository: Repository,
+  def sendGreetings(repository: EmployeeRepository,
                     notification: GreetingsNotification,
                     today: XDate): IO[Unit] = {
 

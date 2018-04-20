@@ -9,7 +9,7 @@ import BirthdayService._
 
 object AcceptanceTest extends SimpleTestSuite {
 
-  class StubRepository(es: List[Employee]) extends Repository {
+  class StubRepository(es: List[Employee]) extends EmployeeRepository {
     def loadEmployees(): IO[List[Employee]] = IO {
       es
     }

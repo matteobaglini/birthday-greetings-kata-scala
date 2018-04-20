@@ -6,7 +6,7 @@ import cats.effect.IO
 object Repository {
 
   trait EmployeeRepository[F[_]] {
-    def loadEmployees(): IO[List[Employee]]
+    def loadEmployees(): F[List[Employee]]
   }
 
   def buildFileRepositoy(fileName: String): EmployeeRepository[IO] =

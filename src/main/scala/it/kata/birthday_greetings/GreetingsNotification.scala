@@ -4,17 +4,17 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
-import cats.instances.list._
-import cats.syntax.traverse._
+import cats._
+import cats.implicits._
 import cats.effect.IO
 
 object GreetingsNotification {
 
   trait GreetingsNotification[F[_]] {
-    def sendMessage(e: Employee): IO[Unit]
+    def sendMessage(e: Employee): F[Unit]
 
-    def sendMessages(es: List[Employee]): IO[Unit] =
-      es.traverse(e => sendMessage(e)).map(_ => ())
+    def sendMessages(es: List[Employee])(implicit A: Applicative[F]): F[Unit] =
+      Traverse[List].traverse(es)(e => sendMessage(e)).map(_ => ())
   }
 
   def buildSmtpGreetingsNotification(smtpHost: String,

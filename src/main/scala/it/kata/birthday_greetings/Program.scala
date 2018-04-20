@@ -9,7 +9,7 @@ import BirthdayService._
 object Program {
   def main(args: Array[String]): Unit = {
 
-    implicit val repository = buildFileRepositoy("employee_data.txt")
+    implicit val repository = buildFileRepositoy[IO]("employee_data.txt")
     implicit val greetingsNotification =
       buildSmtpGreetingsNotification("localhost", 25)
 

@@ -1,7 +1,7 @@
 package it.kata.birthday_greetings
 
 import java.nio.file.Paths
-import cats.effect.IO
+import cats.effect.Sync
 import fs2.{io, text}
 
 object Repository {
@@ -10,11 +10,12 @@ object Repository {
     def loadEmployees(): F[List[Employee]]
   }
 
-  def buildFileRepositoy(fileName: String): EmployeeRepository[IO] =
-    new EmployeeRepository[IO] {
-      def loadEmployees(): IO[List[Employee]] =
+  def buildFileRepositoy[F[_]](fileName: String)(
+      implicit F: Sync[F]): EmployeeRepository[F] =
+    new EmployeeRepository[F] {
+      def loadEmployees(): F[List[Employee]] =
         io.file
-          .readAll[IO](Paths.get(fileName), 4096)
+          .readAll[F](Paths.get(fileName), 4096)
           .through(text.utf8Decode)
           .through(text.lines)
           .drop(1) // skip header

@@ -16,6 +16,11 @@ object AcceptanceTest extends SimpleTestSuite {
     }
   }
 
+  class StubErrorRepository(message: String) extends Repository {
+    def loadEmployees(): IO[List[Employee]] =
+      IO.raiseError(new Exception(message))
+  }
+
   class MockGreetingsNotification extends GreetingsNotification {
 
     val receivers = new collection.mutable.ListBuffer[Employee]
@@ -35,7 +40,7 @@ object AcceptanceTest extends SimpleTestSuite {
     }
 
     def printError(e: Throwable): IO[Unit] = {
-      message = "error"
+      message = e.getMessage
       IO.unit
     }
   }
@@ -76,5 +81,22 @@ object AcceptanceTest extends SimpleTestSuite {
 
     assert(mockGreetingsNotification.receivers.size == 0, "what? messages?")
     assert(mockDisplay.message == "done")
+  }
+
+  test("missing employees source") {
+    val stubRepository = new StubErrorRepository("very bad!")
+    val mockGreetingsNotification = new MockGreetingsNotification()
+    val mockDisplay = new MockDisplay()
+    val today = XDate("2008/01/01")
+
+    val program =
+      sendGreetings(stubRepository,
+                    mockGreetingsNotification,
+                    mockDisplay,
+                    today)
+    program.unsafeRunSync()
+
+    assert(mockGreetingsNotification.receivers.size == 0, "what? messages?")
+    assertEquals("very bad!", mockDisplay.message)
   }
 }

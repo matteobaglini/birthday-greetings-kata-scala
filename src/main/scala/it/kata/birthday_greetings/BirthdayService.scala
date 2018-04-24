@@ -18,9 +18,7 @@ object BirthdayService {
       .map(es => es.filter(e => e.isBirthday(today)))
       .flatMap(bs => notification.sendMessages(bs))
       .value
-      .flatMap {
-        case Right(_) => display.printDone()
-        case Left(e)  => display.printError(e)
-      }
+      .flatMap(ei =>
+        ei.fold(e => display.printError(e), _ => display.printDone()))
   }
 }

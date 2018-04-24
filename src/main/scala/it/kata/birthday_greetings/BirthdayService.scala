@@ -1,6 +1,7 @@
 package it.kata.birthday_greetings
 
 import cats.effect.IO
+import cats.implicits._
 
 import Display._
 import Repository._
@@ -17,8 +18,7 @@ object BirthdayService {
       .loadEmployees()
       .map(es => es.filter(e => e.isBirthday(today)))
       .flatMap(bs => notification.sendMessages(bs))
-      .value
-      .flatMap(ei =>
-        ei.fold(e => display.printError(e), _ => display.printDone()))
+      .fold(e => display.printError(e), _ => display.printDone())
+      .flatten
   }
 }

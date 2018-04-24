@@ -16,9 +16,9 @@ object BirthdayService {
 
     repository
       .loadEmployees()
-      .map(es => es.filter(e => e.isBirthday(today)))
-      .flatMap(bs => notification.sendMessages(bs))
-      .fold(e => display.printError(e), _ => display.printDone())
+      .map(_.filter(_.isBirthday(today)))
+      .flatMap(notification.sendMessages(_))
+      .fold(display.printError(_), _ => display.printDone())
       .flatten
   }
 }

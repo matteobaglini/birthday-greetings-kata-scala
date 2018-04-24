@@ -1,5 +1,7 @@
 package it.kata.birthday_greetings
 
+import java.io.PrintStream
+import Console.{RED, RESET}
 import cats.effect.IO
 
 object Display {
@@ -9,14 +11,14 @@ object Display {
     def printError(e: Throwable): IO[Unit]
   }
 
-  def buildConsoleDisplay(): Display = new Display {
+  def buildConsoleDisplay(out: PrintStream): Display = new Display {
 
     def printDone(): IO[Unit] = IO {
-      println("Done!")
+      out.println("Done!")
     }
 
     def printError(e: Throwable): IO[Unit] = IO {
-      println(Console.RED + s"Error: ${e.getMessage}" + Console.RESET)
+      out.println(s"${RED}Error: ${e.getMessage}${RESET}")
     }
   }
 }

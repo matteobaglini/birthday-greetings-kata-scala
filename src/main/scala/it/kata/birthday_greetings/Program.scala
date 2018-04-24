@@ -8,7 +8,7 @@ import BirthdayService._
 object Program {
   def main(args: Array[String]): Unit = {
 
-    val display = buildConsoleDisplay()
+    val display = buildConsoleDisplay(Console.out)
     val repository = buildFileRepositoy("employee_data.txt")
     val greetingsNotification = buildSmtpGreetingsNotification("localhost", 25)
     val today = XDate()

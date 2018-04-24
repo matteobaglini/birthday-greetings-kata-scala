@@ -2,6 +2,8 @@ package it.kata.birthday_greetings
 
 import minitest._
 import com.dumbster.smtp._
+import java.io.{ByteArrayOutputStream, PrintStream}
+import util.Properties.lineSeparator
 
 import Display._
 import Repository._
@@ -20,7 +22,8 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will send greetings when its somebody's birthday") { mailServer =>
-    val display = buildConsoleDisplay()
+    val baos = new ByteArrayOutputStream()
+    val display = buildConsoleDisplay(new PrintStream(baos))
     val loadEmployees = buildFileRepositoy("employee_data.txt")
     val sendMessage =
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
@@ -36,10 +39,12 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
     val recipients = message.getHeaderValues("To")
     assertEquals(1, recipients.length)
     assertEquals("john.doe@foobar.com", recipients(0).toString)
+    assertEquals(baos.toString, s"Done!${lineSeparator}")
   }
 
   test("will not send emails when nobody's birthday") { mailServer =>
-    val display = buildConsoleDisplay()
+    val baos = new ByteArrayOutputStream()
+    val display = buildConsoleDisplay(new PrintStream(baos))
     val loadEmployees = buildFileRepositoy("employee_data.txt")
     val sendMessage =
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
@@ -49,5 +54,6 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")
+    assertEquals(baos.toString, s"Done!${lineSeparator}")
   }
 }

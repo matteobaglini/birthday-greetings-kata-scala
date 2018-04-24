@@ -3,6 +3,7 @@ package it.kata.birthday_greetings
 import minitest._
 import com.dumbster.smtp._
 
+import Display._
 import Repository._
 import GreetingsNotification._
 import BirthdayService._
@@ -19,12 +20,13 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will send greetings when its somebody's birthday") { mailServer =>
+    val display = buildConsoleDisplay()
     val loadEmployees = buildFileRepositoy("employee_data.txt")
     val sendMessage =
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/10/08")
 
-    val program = sendGreetings(loadEmployees, sendMessage, today)
+    val program = sendGreetings(loadEmployees, sendMessage, display, today)
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
@@ -37,12 +39,13 @@ object EndToEndAcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will not send emails when nobody's birthday") { mailServer =>
+    val display = buildConsoleDisplay()
     val loadEmployees = buildFileRepositoy("employee_data.txt")
     val sendMessage =
       buildSmtpGreetingsNotification("localhost", NONSTANDARD_PORT)
     val today = XDate("2008/01/01")
 
-    val program = sendGreetings(loadEmployees, sendMessage, today)
+    val program = sendGreetings(loadEmployees, sendMessage, display, today)
     program.unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")

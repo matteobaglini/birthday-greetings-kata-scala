@@ -7,24 +7,28 @@ import javax.mail.{Message, Session, Transport}
 import cats.instances.list._
 import cats.syntax.traverse._
 import cats.effect.IO
+import cats.data.EitherT
 
 object GreetingsNotification {
 
   trait GreetingsNotification {
-    def sendMessage(e: Employee): IO[Unit]
+    def sendMessage(e: Employee): EitherT[IO, Throwable, Unit]
 
-    def sendMessages(es: List[Employee]): IO[Unit] =
+    def sendMessages(es: List[Employee]): EitherT[IO, Throwable, Unit] =
       es.traverse(e => sendMessage(e)).map(_ => ())
   }
 
   def buildSmtpGreetingsNotification(smtpHost: String,
                                      smtpPort: Int): GreetingsNotification =
     new GreetingsNotification {
-      def sendMessage(employee: Employee): IO[Unit] = IO {
-        val session = buildSession(smtpHost, smtpPort)
-        val msg = buildMessage(employee, session)
-        Transport.send(msg)
-      }
+      def sendMessage(employee: Employee): EitherT[IO, Throwable, Unit] =
+        EitherT {
+          IO {
+            val session = buildSession(smtpHost, smtpPort)
+            val msg = buildMessage(employee, session)
+            Transport.send(msg)
+          }.attempt
+        }
     }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

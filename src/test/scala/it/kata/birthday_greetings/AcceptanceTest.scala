@@ -2,6 +2,7 @@ package it.kata.birthday_greetings
 
 import minitest._
 import cats.effect.IO
+import cats.data.EitherT
 
 import Display._
 import Repository._
@@ -11,22 +12,24 @@ import BirthdayService._
 object AcceptanceTest extends SimpleTestSuite {
 
   class StubRepository(es: List[Employee]) extends Repository {
-    def loadEmployees(): IO[List[Employee]] = IO {
-      es
+    def loadEmployees(): EitherT[IO, Throwable, List[Employee]] = EitherT {
+      IO.pure(es).attempt
     }
   }
 
   class StubErrorRepository(message: String) extends Repository {
-    def loadEmployees(): IO[List[Employee]] =
-      IO.raiseError(new Exception(message))
+    def loadEmployees(): EitherT[IO, Throwable, List[Employee]] = EitherT {
+      IO.raiseError(new Exception(message)).attempt
+    }
   }
 
   class MockGreetingsNotification extends GreetingsNotification {
 
     val receivers = new collection.mutable.ListBuffer[Employee]
 
-    def sendMessage(e: Employee): IO[Unit] = IO {
+    def sendMessage(e: Employee): EitherT[IO, Throwable, Unit] = EitherT {
       receivers += e
+      IO.unit.attempt
     }
   }
 

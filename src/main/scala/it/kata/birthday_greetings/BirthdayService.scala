@@ -17,7 +17,7 @@ object BirthdayService {
       .loadEmployees()
       .map(es => es.filter(e => e.isBirthday(today)))
       .flatMap(bs => notification.sendMessages(bs))
-      .attempt
+      .value
       .flatMap {
         case Right(_) => display.printDone()
         case Left(e)  => display.printError(e)

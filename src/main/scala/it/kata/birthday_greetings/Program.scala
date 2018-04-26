@@ -4,6 +4,8 @@ import BirthdayService._
 
 object Program {
   def main(args: Array[String]): Unit = {
-    sendGreetings(Config("employee_data.txt", "localhost", 25), XDate())
+    val config = Config("employee_data.txt", "localhost", 25)
+    sendGreetings(config, XDate())
+      .run(config)
   }
 }

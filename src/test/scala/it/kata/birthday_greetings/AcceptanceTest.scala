@@ -17,6 +17,7 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
 
   test("will send greetings when its somebody's birthday") { mailServer =>
     sendGreetings(config, XDate("2008/10/08"))
+      .run(config)
 
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
     val message = mailServer.getReceivedEmail().next().asInstanceOf[SmtpMessage]
@@ -29,6 +30,7 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
 
   test("will not send emails when nobody's birthday") { mailServer =>
     sendGreetings(config, XDate("2008/01/01"))
+      .run(config)
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")
   }

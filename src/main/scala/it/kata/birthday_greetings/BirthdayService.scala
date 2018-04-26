@@ -11,15 +11,16 @@ case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 
 object BirthdayService {
 
-  def sendGreetings(config: Config, xDate: XDate): Unit =
-    Reader[Config, Unit] { config =>
+  def sendGreetings(config: Config, xDate: XDate): Reader[Config, Unit] =
+    Reader { config =>
       loadEmployees(config)
+        .run(config)
         .filter(_.isBirthday(xDate))
-        .map(sendGreetings(config, _))
-    }.run(config)
+        .map(sendGreetings(config, _).run(config))
+    }
 
-  def loadEmployees(config: Config): List[Employee] =
-    Reader[Config, List[Employee]] { config =>
+  def loadEmployees(config: Config): Reader[Config, List[Employee]] = Reader {
+    config =>
       val employees = new collection.mutable.ListBuffer[Employee]
       val in = new BufferedReader(new FileReader(config.fileName))
       var str = ""
@@ -33,14 +34,14 @@ object BirthdayService {
         employees += employee
       }
       employees.toList
-    }.run(config)
+  }
 
-  def sendGreetings(config: Config, employee: Employee): Unit =
-    Reader[Config, Unit] { config =>
+  def sendGreetings(config: Config, employee: Employee): Reader[Config, Unit] =
+    Reader { config =>
       val session = buildSession(config.smtpHost, config.smtpPort)
       val msg = buildMessage(employee, session)
       Transport.send(msg)
-    }.run(config)
+    }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {
     val props = new Properties

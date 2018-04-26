@@ -18,7 +18,9 @@ object BirthdayService {
       .map(es => es.filter(_.isBirthday(xDate)))
       .flatMap(es => sendAllGreetings(es))
 
-  def loadEmployees(): ReaderT[IO, Config, List[Employee]] = ReaderT { config =>
+  type Result[A] = ReaderT[IO, Config, A]
+
+  def loadEmployees(): Result[List[Employee]] = ReaderT { config =>
     IO {
       val employees = new collection.mutable.ListBuffer[Employee]
       val in = new BufferedReader(new FileReader(config.fileName))
@@ -36,10 +38,10 @@ object BirthdayService {
     }
   }
 
-  def sendAllGreetings(es: List[Employee]): ReaderT[IO, Config, Unit] =
+  def sendAllGreetings(es: List[Employee]): Result[Unit] =
     es.traverse(e => sendGreetings(e)).map(_ => ())
 
-  def sendGreetings(employee: Employee): ReaderT[IO, Config, Unit] =
+  def sendGreetings(employee: Employee): Result[Unit] =
     ReaderT { config =>
       IO {
         val session = buildSession(config.smtpHost, config.smtpPort)

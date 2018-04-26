@@ -13,13 +13,9 @@ case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 object BirthdayService {
 
   def sendGreetings(xDate: XDate): Reader[Config, Unit] =
-    Reader { config =>
-      val es = loadEmployees()
-        .run(config)
-        .filter(_.isBirthday(xDate))
-      sendAllGreetings(es)
-        .run(config)
-    }
+    loadEmployees()
+      .map(es => es.filter(_.isBirthday(xDate)))
+      .flatMap(es => sendAllGreetings(es))
 
   def loadEmployees(): Reader[Config, List[Employee]] = Reader { config =>
     val employees = new collection.mutable.ListBuffer[Employee]

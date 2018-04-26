@@ -4,8 +4,7 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
-import cats.instances.list._
-import cats.syntax.traverse._
+import cats.implicits._
 import cats.effect.IO
 
 object GreetingsNotification {
@@ -14,7 +13,7 @@ object GreetingsNotification {
     def sendMessage(e: Employee): IO[Unit]
 
     def sendMessages(es: List[Employee]): IO[Unit] =
-      es.traverse(e => sendMessage(e)).map(_ => ())
+      es.traverse_(e => sendMessage(e))
   }
 
   def buildSmtpGreetingsNotification(smtpHost: String,

@@ -5,7 +5,7 @@ import BirthdayService._
 object Program {
   def main(args: Array[String]): Unit = {
     val config = Config("employee_data.txt", "localhost", 25)
-    sendGreetings(config, XDate())
+    sendGreetings(XDate())
       .run(config)
   }
 }

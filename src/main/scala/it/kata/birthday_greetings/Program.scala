@@ -7,5 +7,6 @@ object Program {
     val config = Config("employee_data.txt", "localhost", 25)
     sendGreetings(XDate())
       .run(config)
+      .unsafeRunSync()
   }
 }

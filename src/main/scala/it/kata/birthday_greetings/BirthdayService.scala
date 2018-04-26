@@ -6,7 +6,6 @@ import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
 import cats.implicits._
-import cats.data.Reader
 import cats.data.ReaderT
 import cats.effect.IO
 
@@ -14,10 +13,10 @@ case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 
 object BirthdayService {
 
-  def sendGreetings(xDate: XDate): Reader[Config, Unit] = ???
-  // loadEmployees()
-  //   .map(es => es.filter(_.isBirthday(xDate)))
-  //   .flatMap(es => sendAllGreetings(es))
+  def sendGreetings(xDate: XDate): ReaderT[IO, Config, Unit] =
+    loadEmployees()
+      .map(es => es.filter(_.isBirthday(xDate)))
+      .flatMap(es => sendAllGreetings(es))
 
   def loadEmployees(): ReaderT[IO, Config, List[Employee]] = ReaderT { config =>
     IO {
@@ -37,14 +36,16 @@ object BirthdayService {
     }
   }
 
-  def sendAllGreetings(es: List[Employee]): Reader[Config, Unit] =
+  def sendAllGreetings(es: List[Employee]): ReaderT[IO, Config, Unit] =
     es.traverse(e => sendGreetings(e)).map(_ => ())
 
-  def sendGreetings(employee: Employee): Reader[Config, Unit] =
-    Reader { config =>
-      val session = buildSession(config.smtpHost, config.smtpPort)
-      val msg = buildMessage(employee, session)
-      Transport.send(msg)
+  def sendGreetings(employee: Employee): ReaderT[IO, Config, Unit] =
+    ReaderT { config =>
+      IO {
+        val session = buildSession(config.smtpHost, config.smtpPort)
+        val msg = buildMessage(employee, session)
+        Transport.send(msg)
+      }
     }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

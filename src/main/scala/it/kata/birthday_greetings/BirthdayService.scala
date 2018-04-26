@@ -5,20 +5,19 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
+case class Config(fileName: String, smtpHost: String, smtpPort: Int)
+
 object BirthdayService {
-  def sendGreetings(fileName: String,
-                    xDate: XDate,
-                    smtpHost: String,
-                    smtpPort: Int): Unit = {
-    for {
-      e <- loadEmployees(fileName)
-      if (e.isBirthday(xDate))
-    } sendGreetings(e, smtpHost, smtpPort)
+
+  def sendGreetings(config: Config, xDate: XDate): Unit = {
+    loadEmployees(config)
+      .filter(_.isBirthday(xDate))
+      .map(sendGreetings(config, _))
   }
 
-  def loadEmployees(fileName: String): List[Employee] = {
+  def loadEmployees(config: Config): List[Employee] = {
     val employees = new collection.mutable.ListBuffer[Employee]
-    val in = new BufferedReader(new FileReader(fileName))
+    val in = new BufferedReader(new FileReader(config.fileName))
     var str = ""
     str = in.readLine // skip header
     while ({ str = in.readLine; str != null }) {
@@ -32,10 +31,8 @@ object BirthdayService {
     employees.toList
   }
 
-  def sendGreetings(employee: Employee,
-                    smtpHost: String,
-                    smtpPort: Int): Unit = {
-    val session = buildSession(smtpHost, smtpPort)
+  def sendGreetings(config: Config, employee: Employee): Unit = {
+    val session = buildSession(config.smtpHost, config.smtpPort)
     val msg = buildMessage(employee, session)
     Transport.send(msg)
   }

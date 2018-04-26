@@ -6,20 +6,18 @@ import BirthdayService._
 
 object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555
+  private val config =
+    Config("employee_data.txt", "localhost", NONSTANDARD_PORT)
 
-  def setup(): SimpleSmtpServer = {
+  def setup(): SimpleSmtpServer =
     SimpleSmtpServer.start(NONSTANDARD_PORT)
-  }
 
-  def tearDown(mailServer: SimpleSmtpServer): Unit = {
+  def tearDown(mailServer: SimpleSmtpServer): Unit =
     mailServer.stop()
-  }
 
   test("will send greetings when its somebody's birthday") { mailServer =>
-    sendGreetings("employee_data.txt",
-                  XDate("2008/10/08"),
-                  "localhost",
-                  NONSTANDARD_PORT)
+    sendGreetings(config, XDate("2008/10/08"))
+
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
     val message = mailServer.getReceivedEmail().next().asInstanceOf[SmtpMessage]
     assertEquals("Happy Birthday, dear John!", message.getBody)
@@ -30,10 +28,8 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will not send emails when nobody's birthday") { mailServer =>
-    sendGreetings("employee_data.txt",
-                  XDate("2008/01/01"),
-                  "localhost",
-                  NONSTANDARD_PORT)
+    sendGreetings(config, XDate("2008/01/01"))
+
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")
   }
 }

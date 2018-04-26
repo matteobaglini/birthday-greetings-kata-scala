@@ -5,6 +5,7 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
+import cats.implicits._
 import cats.data.Reader
 
 case class Config(fileName: String, smtpHost: String, smtpPort: Int)
@@ -13,10 +14,11 @@ object BirthdayService {
 
   def sendGreetings(xDate: XDate): Reader[Config, Unit] =
     Reader { config =>
-      loadEmployees()
+      val es = loadEmployees()
         .run(config)
         .filter(_.isBirthday(xDate))
-        .map(sendGreetings(_).run(config))
+      sendAllGreetings(es)
+        .run(config)
     }
 
   def loadEmployees(): Reader[Config, List[Employee]] = Reader { config =>
@@ -34,6 +36,9 @@ object BirthdayService {
     }
     employees.toList
   }
+
+  def sendAllGreetings(es: List[Employee]): Reader[Config, Unit] =
+    es.traverse(e => sendGreetings(e)).map(_ => ())
 
   def sendGreetings(employee: Employee): Reader[Config, Unit] =
     Reader { config =>

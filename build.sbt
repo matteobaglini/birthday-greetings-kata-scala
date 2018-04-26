@@ -26,6 +26,7 @@ lazy val root = (project in file(".")).
       javaMail,
       javaActivation,
       catsCore,
+      catsMtl,
       catsEffect,
       miniTest % Test,
       dumbster % Test

@@ -16,16 +16,14 @@ object Repository {
         .map(_.map(_.split(", ")))
         .map(_.map(data => Employee(data(1), data(0), data(2), data(3))))
 
-    private def readLines(fileName: String): IO[List[String]] = IO {
-      val in = new BufferedReader(new FileReader(fileName))
-      try {
+    private def readLines(fileName: String): IO[List[String]] =
+      IO(new BufferedReader(new FileReader(fileName))).bracket { in =>
         val lines = new collection.mutable.ListBuffer[String]
         var str = in.readLine // skip header
         while ({ str = in.readLine; str != null }) lines += str
-        lines.toList
-      } finally {
-        in.close()
+        IO(lines.toList)
+      } { in =>
+        IO(in.close())
       }
-    }
   }
 }

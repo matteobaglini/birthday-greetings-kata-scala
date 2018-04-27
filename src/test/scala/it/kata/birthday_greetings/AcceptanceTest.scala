@@ -5,7 +5,7 @@ import com.dumbster.smtp._
 import cats.mtl.implicits._
 
 import BirthdayService._
-import Program.Result
+import Program._
 
 object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555

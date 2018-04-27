@@ -7,8 +7,6 @@ import EmployeeRepository._
 import GreetingsGateway._
 import Domain._
 
-case class Config(fileName: String, smtpHost: String, smtpPort: Int)
-
 object BirthdayService {
 
   def sendGreetings[F[_]](today: XDate)(implicit

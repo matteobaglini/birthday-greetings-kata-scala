@@ -21,7 +21,7 @@ object AcceptanceTest extends SimpleTestSuite {
 
   class InMemoryGreetingsGateway extends GreetingsGateway[Test] {
 
-    def sendAllGreetings(es: List[Employee]): Test[Unit] =
+    def sendAll(es: List[Employee]): Test[Unit] =
       es.traverse_(e => send(e))
 
     def send(e: Employee): Test[Unit] =

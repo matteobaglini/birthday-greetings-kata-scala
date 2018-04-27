@@ -16,7 +16,7 @@ object BirthdayService {
     for {
       es <- ER.loadEmployees()
       bs = hasBirthday(today, es)
-      _ <- GG.sendAllGreetings(bs)
+      _ <- GG.sendAll(bs)
     } yield ()
   }
 }

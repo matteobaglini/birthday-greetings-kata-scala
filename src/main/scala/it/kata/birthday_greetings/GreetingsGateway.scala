@@ -17,7 +17,7 @@ object GreetingsGateway {
     new SmtpGreetingsGateway[F]()
 
   trait GreetingsGateway[F[_]] {
-    def sendAllGreetings(es: List[Employee]): F[Unit]
+    def sendAll(es: List[Employee]): F[Unit]
     def send(e: Employee): F[Unit]
   }
 
@@ -26,7 +26,7 @@ object GreetingsGateway {
                                    S: Sync[F])
       extends GreetingsGateway[F] {
 
-    def sendAllGreetings(es: List[Employee]): F[Unit] =
+    def sendAll(es: List[Employee]): F[Unit] =
       es.traverse_(e => send(e))
 
     def send(e: Employee): F[Unit] =

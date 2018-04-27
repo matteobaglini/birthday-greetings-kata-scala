@@ -7,7 +7,7 @@ import cats.mtl.implicits._
 import BirthdayService._
 import Program._
 
-object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
+object SystemTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555
   private val config =
     Config("employee_data.txt", "localhost", NONSTANDARD_PORT)

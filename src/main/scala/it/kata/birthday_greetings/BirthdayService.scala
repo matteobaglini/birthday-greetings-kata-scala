@@ -15,13 +15,11 @@ object BirthdayService {
                                         ER: EmployeeRepository[F],
                                         GG: GreetingsGateway[F],
                                         D: Display[F]): F[Unit] = {
-    val app: F[Unit] = for {
+    (for {
       es <- ER.loadEmployees()
       bs = hasBirthday(today, es)
       r <- GG.sendAll(bs)
-    } yield r
-
-    app.attempt
+    } yield r).attempt
       .flatMap {
         case Right(_) => D.printDone
         case Left(e)  => D.printError(e)

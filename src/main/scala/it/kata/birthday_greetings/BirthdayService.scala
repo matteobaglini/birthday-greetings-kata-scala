@@ -17,7 +17,7 @@ object BirthdayService {
                                         GG: GreetingsGateway[F]): F[Unit] = {
     for {
       es <- ER.loadEmployees()
-      bs = filter(today, es)
+      bs = hasBirthday(today, es)
       _ <- GG.sendAllGreetings(bs)
     } yield ()
   }

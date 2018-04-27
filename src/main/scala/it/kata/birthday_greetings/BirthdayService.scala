@@ -14,6 +14,11 @@ case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 
 object EmployeeRepository {
 
+  def apply[F[_]](implicit
+                  MR: ApplicativeAsk[F, Config],
+                  S: Sync[F]): EmployeeRepository[F] =
+    new FlatFileEmployeeRepository[F]()
+
   trait EmployeeRepository[F[_]] {
     def loadEmployees(): F[List[Employee]]
   }
@@ -49,6 +54,10 @@ object EmployeeRepository {
 }
 
 object GreetingsGateway {
+
+  def apply[F[_]](implicit MR: ApplicativeAsk[F, Config],
+                  S: Sync[F]): GreetingsGateway[F] =
+    new SmtpGreetingsGateway[F]()
 
   trait GreetingsGateway[F[_]] {
     def sendAllGreetings(es: List[Employee]): F[Unit]

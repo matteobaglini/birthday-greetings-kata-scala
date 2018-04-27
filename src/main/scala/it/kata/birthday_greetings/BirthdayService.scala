@@ -19,9 +19,6 @@ object BirthdayService {
       .map(hasBirthday(today, _))
       .flatMap(GG.sendAll(_))
       .attempt
-      .flatMap {
-        case Right(_) => D.printDone
-        case Left(e)  => D.printError(e)
-      }
+      .flatMap(_.fold(e => D.printError(e), _ => D.printDone()))
   }
 }

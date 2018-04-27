@@ -6,49 +6,70 @@ import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
 import cats.implicits._
-import cats.data.ReaderT
-import cats.effect.IO
+import cats.mtl._
+import cats.mtl.implicits._
+import cats.effect._
 
 case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 
 object BirthdayService {
 
-  def sendGreetings(xDate: XDate): ReaderT[IO, Config, Unit] =
-    loadEmployees()
-      .map(es => es.filter(_.isBirthday(xDate)))
-      .flatMap(es => sendAllGreetings(es))
+  def sendGreetings[F[_]](today: XDate)(implicit
+                                        MR: ApplicativeAsk[F, Config],
+                                        S: Sync[F]): F[Unit] =
+    for {
+      es <- loadEmployees[F]()
+      bs = filter(today, es)
+      _ <- sendAllGreetings[F](bs)
+    } yield ()
 
-  type Result[A] = ReaderT[IO, Config, A]
+  def loadEmployees[F[_]]()(implicit
+                            MR: ApplicativeAsk[F, Config],
+                            S: Sync[F]): F[List[Employee]] =
+    for {
+      config <- MR.ask
+      lines <- loadLines[F](config.fileName)
+      es = lines.map(l => parse(l))
+    } yield es
 
-  def loadEmployees(): Result[List[Employee]] = ReaderT { config =>
-    IO {
-      val employees = new collection.mutable.ListBuffer[Employee]
-      val in = new BufferedReader(new FileReader(config.fileName))
-      var str = ""
-      str = in.readLine // skip header
-      while ({ str = in.readLine; str != null }) {
-        val employeeData = str.split(", ")
-        val employee = Employee(employeeData(1),
-                                employeeData(0),
-                                employeeData(2),
-                                employeeData(3))
-        employees += employee
-      }
-      employees.toList
-    }
+  def filter(today: XDate, es: List[Employee]): List[Employee] =
+    es.filter(_.isBirthday(today))
+
+  def sendAllGreetings[F[_]](es: List[Employee])(
+      implicit MR: ApplicativeAsk[F, Config],
+      S: Sync[F]): F[Unit] =
+    es.traverse_(e => send[F](e))
+
+  def send[F[_]](e: Employee)(implicit
+                              MR: ApplicativeAsk[F, Config],
+                              S: Sync[F]): F[Unit] =
+    for {
+      config <- MR.ask
+      _ <- sendMessage[F](config.smtpHost, config.smtpPort, e)
+    } yield ()
+
+  private def parse(line: String): Employee = {
+    val data = line.split(", ")
+    Employee(data(1), data(0), data(2), data(3))
   }
 
-  def sendAllGreetings(es: List[Employee]): Result[Unit] =
-    es.traverse(e => sendGreetings(e)).map(_ => ())
-
-  def sendGreetings(employee: Employee): Result[Unit] =
-    ReaderT { config =>
-      IO {
-        val session = buildSession(config.smtpHost, config.smtpPort)
-        val msg = buildMessage(employee, session)
-        Transport.send(msg)
-      }
+  private def loadLines[F[_]](fileName: String)(
+      implicit S: Sync[F]): F[List[String]] = S.delay {
+    val lines = new collection.mutable.ListBuffer[String]
+    val in = new BufferedReader(new FileReader(fileName))
+    var str = in.readLine // skip header
+    while ({ str = in.readLine; str != null }) {
+      lines += str
     }
+    lines.toList
+  }
+
+  private def sendMessage[F[_]](smtpHost: String, smtpPort: Int, e: Employee)(
+      implicit S: Sync[F]): F[Unit] = S.delay {
+    val session = buildSession(smtpHost, smtpPort)
+    val msg = buildMessage(e, session)
+    Transport.send(msg)
+  }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {
     val props = new Properties

@@ -2,7 +2,10 @@ package it.kata.birthday_greetings
 
 import minitest._
 import com.dumbster.smtp._
+import cats.mtl.implicits._
+
 import BirthdayService._
+import Program.Result
 
 object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555
@@ -16,11 +19,11 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
     mailServer.stop()
 
   test("will send greetings when its somebody's birthday") { mailServer =>
-    sendGreetings(XDate("2008/10/08"))
+    sendGreetings[Result](XDate("2008/10/08"))
       .run(config)
       .unsafeRunSync()
 
-    assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
+    assertEquals(mailServer.getReceivedEmailSize, 1)
     val message = mailServer.getReceivedEmail().next().asInstanceOf[SmtpMessage]
     assertEquals("Happy Birthday, dear John!", message.getBody)
     assertEquals("Happy Birthday!", message.getHeaderValue("Subject"))
@@ -30,7 +33,7 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will not send emails when nobody's birthday") { mailServer =>
-    sendGreetings(XDate("2008/01/01"))
+    sendGreetings[Result](XDate("2008/01/01"))
       .run(config)
       .unsafeRunSync()
 

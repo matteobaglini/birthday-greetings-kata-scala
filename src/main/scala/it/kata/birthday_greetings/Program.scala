@@ -11,6 +11,9 @@ object Program {
 
     val config = Config("employee_data.txt", "localhost", 25)
 
+    implicit val employeeRepository = EmployeeRepository[Result]()
+    implicit val greetingsGateway = GreetingsGateway[Result]()
+
     sendGreetings[Result](XDate())
       .run(config)
       .unsafeRunSync()

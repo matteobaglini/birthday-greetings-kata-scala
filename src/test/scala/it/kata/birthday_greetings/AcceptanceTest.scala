@@ -12,6 +12,9 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   private val config =
     Config("employee_data.txt", "localhost", NONSTANDARD_PORT)
 
+  implicit val employeeRepository = EmployeeRepository[Result]()
+  implicit val greetingsGateway = GreetingsGateway[Result]()
+
   def setup(): SimpleSmtpServer =
     SimpleSmtpServer.start(NONSTANDARD_PORT)
 

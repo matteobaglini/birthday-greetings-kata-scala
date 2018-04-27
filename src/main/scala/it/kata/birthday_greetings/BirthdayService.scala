@@ -5,18 +5,22 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
+import cats._
 import cats.implicits._
 import cats.mtl._
 import cats.mtl.implicits._
 import cats.effect._
 
+import EmployeeRepository._
+import GreetingsGateway._
+
 case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 
 object EmployeeRepository {
 
-  def apply[F[_]](implicit
-                  MR: ApplicativeAsk[F, Config],
-                  S: Sync[F]): EmployeeRepository[F] =
+  def apply[F[_]]()(implicit
+                    MR: ApplicativeAsk[F, Config],
+                    S: Sync[F]): EmployeeRepository[F] =
     new FlatFileEmployeeRepository[F]()
 
   trait EmployeeRepository[F[_]] {
@@ -55,8 +59,9 @@ object EmployeeRepository {
 
 object GreetingsGateway {
 
-  def apply[F[_]](implicit MR: ApplicativeAsk[F, Config],
-                  S: Sync[F]): GreetingsGateway[F] =
+  def apply[F[_]]()(implicit
+                    MR: ApplicativeAsk[F, Config],
+                    S: Sync[F]): GreetingsGateway[F] =
     new SmtpGreetingsGateway[F]()
 
   trait GreetingsGateway[F[_]] {
@@ -64,7 +69,8 @@ object GreetingsGateway {
     def send(e: Employee): F[Unit]
   }
 
-  class SmtpGreetingsGateway[F[_]](implicit MR: ApplicativeAsk[F, Config],
+  class SmtpGreetingsGateway[F[_]](implicit
+                                   MR: ApplicativeAsk[F, Config],
                                    S: Sync[F])
       extends GreetingsGateway[F] {
 
@@ -108,77 +114,16 @@ object GreetingsGateway {
 object BirthdayService {
 
   def sendGreetings[F[_]](today: XDate)(implicit
-                                        MR: ApplicativeAsk[F, Config],
-                                        S: Sync[F]): F[Unit] =
+                                        M: Monad[F],
+                                        ER: EmployeeRepository[F],
+                                        GG: GreetingsGateway[F]): F[Unit] = {
     for {
-      es <- loadEmployees[F]()
+      es <- ER.loadEmployees()
       bs = filter(today, es)
-      _ <- sendAllGreetings[F](bs)
+      _ <- GG.sendAllGreetings(bs)
     } yield ()
+  }
 
-  def loadEmployees[F[_]]()(implicit
-                            MR: ApplicativeAsk[F, Config],
-                            S: Sync[F]): F[List[Employee]] =
-    for {
-      config <- MR.ask
-      lines <- loadLines[F](config.fileName)
-      es = lines.map(l => parse(l))
-    } yield es
-
-  def filter(today: XDate, es: List[Employee]): List[Employee] =
+  private def filter(today: XDate, es: List[Employee]): List[Employee] =
     es.filter(_.isBirthday(today))
-
-  def sendAllGreetings[F[_]](es: List[Employee])(
-      implicit MR: ApplicativeAsk[F, Config],
-      S: Sync[F]): F[Unit] =
-    es.traverse_(e => send[F](e))
-
-  def send[F[_]](e: Employee)(implicit
-                              MR: ApplicativeAsk[F, Config],
-                              S: Sync[F]): F[Unit] =
-    for {
-      config <- MR.ask
-      _ <- sendMessage[F](config.smtpHost, config.smtpPort, e)
-    } yield ()
-
-  private def parse(line: String): Employee = {
-    val data = line.split(", ")
-    Employee(data(1), data(0), data(2), data(3))
-  }
-
-  private def loadLines[F[_]](fileName: String)(
-      implicit S: Sync[F]): F[List[String]] = S.delay {
-    val lines = new collection.mutable.ListBuffer[String]
-    val in = new BufferedReader(new FileReader(fileName))
-    var str = in.readLine // skip header
-    while ({ str = in.readLine; str != null }) {
-      lines += str
-    }
-    lines.toList
-  }
-
-  private def sendMessage[F[_]](smtpHost: String, smtpPort: Int, e: Employee)(
-      implicit S: Sync[F]): F[Unit] = S.delay {
-    val session = buildSession(smtpHost, smtpPort)
-    val msg = buildMessage(e, session)
-    Transport.send(msg)
-  }
-
-  private def buildSession(smtpHost: String, smtpPort: Int): Session = {
-    val props = new Properties
-    props.put("mail.smtp.host", smtpHost)
-    props.put("mail.smtp.port", "" + smtpPort)
-    Session.getInstance(props, null)
-  }
-
-  private def buildMessage(employee: Employee,
-                           session: Session): MimeMessage = {
-    val msg = new MimeMessage(session)
-    msg.setFrom(new InternetAddress("sender@here.com"))
-    msg.setRecipient(Message.RecipientType.TO,
-                     new InternetAddress(employee.email))
-    msg.setSubject("Happy Birthday!")
-    msg.setText(s"Happy Birthday, dear ${employee.firstName}!");
-    msg
-  }
 }

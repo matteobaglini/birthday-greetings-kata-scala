@@ -10,10 +10,11 @@ import Program._
 object SystemTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555
   private val config =
-    Config("employee_data.txt", "localhost", NONSTANDARD_PORT)
+    Config("employee_data.txt", "localhost", NONSTANDARD_PORT, Console.MAGENTA)
 
   implicit val employeeRepository = EmployeeRepository[Result]()
   implicit val greetingsGateway = GreetingsGateway[Result]()
+  implicit val display = Display[Result]()
 
   def setup(): SimpleSmtpServer =
     SimpleSmtpServer.start(NONSTANDARD_PORT)

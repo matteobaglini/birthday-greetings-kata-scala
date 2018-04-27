@@ -5,18 +5,26 @@ import cats.implicits._
 
 import EmployeeRepository._
 import GreetingsGateway._
+import Display._
 import Domain._
 
 object BirthdayService {
 
   def sendGreetings[F[_]](today: XDate)(implicit
-                                        M: Monad[F],
+                                        M: MonadError[F, Throwable],
                                         ER: EmployeeRepository[F],
-                                        GG: GreetingsGateway[F]): F[Unit] = {
-    for {
+                                        GG: GreetingsGateway[F],
+                                        D: Display[F]): F[Unit] = {
+    val app: F[Unit] = for {
       es <- ER.loadEmployees()
       bs = hasBirthday(today, es)
-      _ <- GG.sendAll(bs)
-    } yield ()
+      r <- GG.sendAll(bs)
+    } yield r
+
+    app.attempt
+      .flatMap {
+        case Right(_) => D.printDone
+        case Left(e)  => D.printError(e)
+      }
   }
 }

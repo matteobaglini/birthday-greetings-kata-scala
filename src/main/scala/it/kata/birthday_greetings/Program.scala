@@ -1,25 +1,29 @@
 package it.kata.birthday_greetings
 
-import BirthdayService._
-
-import cats.data.ReaderT
-import cats.effect.IO
+import cats.data._
+import cats.effect._
 import cats.mtl.implicits._
 
-case class Config(fileName: String, smtpHost: String, smtpPort: Int)
+import BirthdayService._
+
+case class Config(fileName: String,
+                  smtpHost: String,
+                  smtpPort: Int,
+                  errorColor: String)
 
 object Program {
 
-  type Result[A] = ReaderT[IO, Config, A]
+  type Result[A] = ReaderT[IO, Config, A] // ok catch and print in red
 
   def main(args: Array[String]): Unit = {
 
-    val config = Config("employee_data.txt", "localhost", 25)
+    val config = Config("employee_data.txt", "localhost", 25, Console.MAGENTA)
 
     implicit val employeeRepository = EmployeeRepository[Result]()
     implicit val greetingsGateway = GreetingsGateway[Result]()
+    implicit val display = Display[Result]()
 
-    sendGreetings[Result](XDate())
+    sendGreetings[Result](XDate("2008/10/08"))
       .run(config)
       .unsafeRunSync()
   }

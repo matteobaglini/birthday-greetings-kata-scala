@@ -18,8 +18,9 @@ object GreetingsGateway {
     new SmtpGreetingsGateway[F]()
 
   trait GreetingsGateway[F[_]] {
+
     def sendAll(es: List[Employee])(implicit A: Applicative[F]): F[Unit] =
-      Traverse[List].traverse_(es)(e => send(e))
+      es.traverse_(e => send(e))
 
     def send(e: Employee): F[Unit]
   }

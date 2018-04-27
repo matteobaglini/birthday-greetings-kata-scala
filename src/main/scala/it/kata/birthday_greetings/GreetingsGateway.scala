@@ -4,6 +4,7 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
+import cats._
 import cats.implicits._
 import cats.mtl._
 import cats.mtl.implicits._
@@ -17,7 +18,9 @@ object GreetingsGateway {
     new SmtpGreetingsGateway[F]()
 
   trait GreetingsGateway[F[_]] {
-    def sendAll(es: List[Employee]): F[Unit]
+    def sendAll(es: List[Employee])(implicit A: Applicative[F]): F[Unit] =
+      Traverse[List].traverse_(es)(e => send(e))
+
     def send(e: Employee): F[Unit]
   }
 
@@ -25,9 +28,6 @@ object GreetingsGateway {
                                    MR: ApplicativeAsk[F, Config],
                                    S: Sync[F])
       extends GreetingsGateway[F] {
-
-    def sendAll(es: List[Employee]): F[Unit] =
-      es.traverse_(e => send(e))
 
     def send(e: Employee): F[Unit] =
       for {

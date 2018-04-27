@@ -2,7 +2,6 @@ package it.kata.birthday_greetings
 
 import minitest._
 import cats.data._
-import cats.implicits._
 
 import EmployeeRepository._
 import GreetingsGateway._
@@ -20,9 +19,6 @@ object AcceptanceTest extends SimpleTestSuite {
   }
 
   class InMemoryGreetingsGateway extends GreetingsGateway[Test] {
-
-    def sendAll(es: List[Employee]): Test[Unit] =
-      es.traverse_(e => send(e))
 
     def send(e: Employee): Test[Unit] =
       State.modify(s => s.copy(sent = s.sent :+ e))

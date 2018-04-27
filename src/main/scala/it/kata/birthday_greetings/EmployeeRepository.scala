@@ -9,18 +9,18 @@ import cats.effect._
 
 object EmployeeRepository {
 
-  def apply[F[_]]()(implicit
-                    MR: ApplicativeAsk[F, Config],
-                    S: Sync[F]): EmployeeRepository[F] =
-    new FlatFileEmployeeRepository[F]()
+  def file[F[_]]()(implicit
+                   MR: ApplicativeAsk[F, Config],
+                   S: Sync[F]): EmployeeRepository[F] =
+    new FileEmployeeRepository[F]()
 
   trait EmployeeRepository[F[_]] {
     def loadEmployees(): F[List[Employee]]
   }
 
-  class FlatFileEmployeeRepository[F[_]](implicit
-                                         MR: ApplicativeAsk[F, Config],
-                                         S: Sync[F])
+  class FileEmployeeRepository[F[_]](implicit
+                                     MR: ApplicativeAsk[F, Config],
+                                     S: Sync[F])
       extends EmployeeRepository[F] {
 
     def loadEmployees(): F[List[Employee]] =

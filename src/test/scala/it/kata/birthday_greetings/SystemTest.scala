@@ -13,10 +13,10 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
   private val config =
     Config("employee_data.txt", "localhost", NONSTANDARD_PORT, Console.MAGENTA)
 
-  implicit val employeeRepository = EmployeeRepository[Result]()
-  implicit val greetingsGateway = GreetingsGateway[Result]()
+  implicit val employeeRepository = EmployeeRepository.file[Result]()
+  implicit val greetingsGateway = GreetingsGateway.smtp[Result]()
   implicit val display =
-    Display[Result](new PrintStream(new ByteArrayOutputStream()))
+    Display.stream[Result](new PrintStream(new ByteArrayOutputStream()))
 
   def setup(): SimpleSmtpServer =
     SimpleSmtpServer.start(NONSTANDARD_PORT)

@@ -12,9 +12,9 @@ import cats.effect._
 
 object GreetingsGateway {
 
-  def apply[F[_]]()(implicit
-                    MR: ApplicativeAsk[F, Config],
-                    S: Sync[F]): GreetingsGateway[F] =
+  def smtp[F[_]]()(implicit
+                   MR: ApplicativeAsk[F, Config],
+                   S: Sync[F]): GreetingsGateway[F] =
     new SmtpGreetingsGateway[F]()
 
   trait GreetingsGateway[F[_]] {

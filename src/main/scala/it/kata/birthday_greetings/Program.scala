@@ -15,9 +15,9 @@ object Program {
 
   type Result[A] = ReaderT[IO, Config, A]
 
-  implicit val employeeRepository = EmployeeRepository[Result]()
-  implicit val greetingsGateway = GreetingsGateway[Result]()
-  implicit val display = Display[Result](Console.out)
+  implicit val employeeRepository = EmployeeRepository.file[Result]()
+  implicit val greetingsGateway = GreetingsGateway.smtp[Result]()
+  implicit val display = Display.stream[Result](Console.out)
 
   def main(args: Array[String]): Unit = {
 

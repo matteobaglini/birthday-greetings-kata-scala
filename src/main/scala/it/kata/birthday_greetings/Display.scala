@@ -10,19 +10,20 @@ import cats.effect._
 
 object Display {
 
-  def apply[F[_]](out: PrintStream)(implicit
-                                    MR: ApplicativeAsk[F, Config],
-                                    S: Sync[F]): Display[F] =
-    new ConsoleDisplay[F](out)
+  def stream[F[_]](out: PrintStream)(implicit
+                                     MR: ApplicativeAsk[F, Config],
+                                     S: Sync[F]): Display[F] =
+    new PrintStreamDisplay[F](out)
 
   trait Display[F[_]] {
     def printDone(): F[Unit]
     def printError(e: Throwable): F[Unit]
   }
 
-  class ConsoleDisplay[F[_]](out: PrintStream)(implicit
-                                               MR: ApplicativeAsk[F, Config],
-                                               S: Sync[F])
+  class PrintStreamDisplay[F[_]](out: PrintStream)(
+      implicit
+      MR: ApplicativeAsk[F, Config],
+      S: Sync[F])
       extends Display[F] {
 
     def printDone(): F[Unit] =

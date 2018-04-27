@@ -12,6 +12,15 @@ import cats.effect._
 
 case class Config(fileName: String, smtpHost: String, smtpPort: Int)
 
+trait EmployeeRepository[F[_]] {
+  def loadEmployees(): F[List[Employee]]
+}
+
+trait GreetingsGateway[F[_]] {
+  def sendAllGreetings(es: List[Employee]): F[List[Employee]]
+  def send(e: Employee): F[Unit]
+}
+
 object BirthdayService {
 
   def sendGreetings[F[_]](today: XDate)(implicit

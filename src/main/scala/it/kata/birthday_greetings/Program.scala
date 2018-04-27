@@ -13,15 +13,15 @@ case class Config(fileName: String,
 
 object Program {
 
-  type Result[A] = ReaderT[IO, Config, A] // ok catch and print in red
+  type Result[A] = ReaderT[IO, Config, A]
+
+  implicit val employeeRepository = EmployeeRepository[Result]()
+  implicit val greetingsGateway = GreetingsGateway[Result]()
+  implicit val display = Display[Result](Console.out)
 
   def main(args: Array[String]): Unit = {
 
     val config = Config("employee_data.txt", "localhost", 25, Console.MAGENTA)
-
-    implicit val employeeRepository = EmployeeRepository[Result]()
-    implicit val greetingsGateway = GreetingsGateway[Result]()
-    implicit val display = Display[Result]()
 
     sendGreetings[Result](XDate("2008/10/08"))
       .run(config)

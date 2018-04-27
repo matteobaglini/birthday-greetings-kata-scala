@@ -1,5 +1,6 @@
 package it.kata.birthday_greetings
 
+import java.io.{ByteArrayOutputStream, PrintStream}
 import minitest._
 import com.dumbster.smtp._
 import cats.mtl.implicits._
@@ -14,7 +15,8 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
 
   implicit val employeeRepository = EmployeeRepository[Result]()
   implicit val greetingsGateway = GreetingsGateway[Result]()
-  implicit val display = Display[Result]()
+  implicit val display =
+    Display[Result](new PrintStream(new ByteArrayOutputStream()))
 
   def setup(): SimpleSmtpServer =
     SimpleSmtpServer.start(NONSTANDARD_PORT)

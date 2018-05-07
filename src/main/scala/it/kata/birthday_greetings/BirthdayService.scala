@@ -7,7 +7,7 @@ import javax.mail.{Message, Session, Transport}
 
 class BirthdayService {
   def sendGreetings(fileName: String,
-                    xDate: XDate,
+                    today: XDate,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
     val in = new BufferedReader(new FileReader(fileName))
@@ -20,7 +20,7 @@ class BirthdayService {
                               employeeData(2),
                               employeeData(3))
 
-      if (employee.isBirthday(xDate)) {
+      if (employee.isBirthday(today)) {
         val recipient = employee.email
         val body = s"Happy Birthday, dear ${employee.firstName}!"
         val subject = "Happy Birthday!"

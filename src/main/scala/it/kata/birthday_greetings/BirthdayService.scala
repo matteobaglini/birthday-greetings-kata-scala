@@ -13,19 +13,26 @@ object BirthdayService {
                     smtpPort: Int): Unit = {
 
     val loaded = loadEmployees(fileName)
+
+    val employees = new ListBuffer[Employee]
     for (employee <- loaded) {
       if (employee.isBirthday(today)) {
-        val recipient = employee.email
-        val body = s"Happy Birthday, dear ${employee.firstName}!"
-        val subject = "Happy Birthday!"
-
-        sendMessage(smtpHost,
-                    smtpPort,
-                    "sender@here.com",
-                    subject,
-                    body,
-                    recipient)
+        employees += employee
       }
+    }
+    val birthdays = employees.toList
+
+    for (employee <- birthdays) {
+      val recipient = employee.email
+      val body = s"Happy Birthday, dear ${employee.firstName}!"
+      val subject = "Happy Birthday!"
+
+      sendMessage(smtpHost,
+                  smtpPort,
+                  "sender@here.com",
+                  subject,
+                  body,
+                  recipient)
     }
   }
 

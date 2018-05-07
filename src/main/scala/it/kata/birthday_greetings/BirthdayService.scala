@@ -4,12 +4,15 @@ import java.io.{BufferedReader, FileReader}
 import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
+import collection.mutable.ListBuffer
 
 object BirthdayService {
   def sendGreetings(fileName: String,
                     today: XDate,
                     smtpHost: String,
                     smtpPort: Int): Unit = {
+
+    val employees = new ListBuffer[Employee]
     val in = new BufferedReader(new FileReader(fileName))
     var str = ""
     str = in.readLine // skip header
@@ -20,6 +23,11 @@ object BirthdayService {
                               employeeData(2),
                               employeeData(3))
 
+      employees += employee
+    }
+    val loaded = employees.toList
+
+    for (employee <- loaded) {
       if (employee.isBirthday(today)) {
         val recipient = employee.email
         val body = s"Happy Birthday, dear ${employee.firstName}!"

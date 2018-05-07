@@ -13,14 +13,7 @@ object BirthdayService {
                     smtpPort: Int): Unit = {
 
     val loaded = loadEmployees(fileName)
-
-    val employees = new ListBuffer[Employee]
-    for (employee <- loaded) {
-      if (employee.isBirthday(today)) {
-        employees += employee
-      }
-    }
-    val birthdays = employees.toList
+    val birthdays = haveBirthday(loaded, today)
 
     for (employee <- birthdays) {
       val recipient = employee.email
@@ -49,6 +42,17 @@ object BirthdayService {
                               employeeData(3))
 
       employees += employee
+    }
+    employees.toList
+  }
+
+  private def haveBirthday(loaded: List[Employee],
+                              today: XDate): List[Employee] = {
+    val employees = new ListBuffer[Employee]
+    for (employee <- loaded) {
+      if (employee.isBirthday(today)) {
+        employees += employee
+      }
     }
     employees.toList
   }

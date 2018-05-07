@@ -1,8 +1,9 @@
 package it.kata.birthday_greetings
 
+import BirthdayService._
+
 object Program {
   def main(args: Array[String]): Unit = {
-    val service = new BirthdayService
-    service.sendGreetings("employee_data.txt", XDate(), "localhost", 25)
+    sendGreetings("employee_data.txt", XDate(), "localhost", 25)
   }
 }

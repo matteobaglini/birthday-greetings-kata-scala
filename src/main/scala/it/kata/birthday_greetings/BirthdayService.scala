@@ -12,21 +12,7 @@ object BirthdayService {
                     smtpHost: String,
                     smtpPort: Int): Unit = {
 
-    val employees = new ListBuffer[Employee]
-    val in = new BufferedReader(new FileReader(fileName))
-    var str = ""
-    str = in.readLine // skip header
-    while ({ str = in.readLine; str != null }) {
-      val employeeData = str.split(", ")
-      val employee = Employee(employeeData(1),
-                              employeeData(0),
-                              employeeData(2),
-                              employeeData(3))
-
-      employees += employee
-    }
-    val loaded = employees.toList
-
+    val loaded = loadEmployees(fileName)
     for (employee <- loaded) {
       if (employee.isBirthday(today)) {
         val recipient = employee.email
@@ -41,6 +27,23 @@ object BirthdayService {
                     recipient)
       }
     }
+  }
+
+  private def loadEmployees(fileName: String): List[Employee] = {
+    val employees = new ListBuffer[Employee]
+    val in = new BufferedReader(new FileReader(fileName))
+    var str = ""
+    str = in.readLine // skip header
+    while ({ str = in.readLine; str != null }) {
+      val employeeData = str.split(", ")
+      val employee = Employee(employeeData(1),
+                              employeeData(0),
+                              employeeData(2),
+                              employeeData(3))
+
+      employees += employee
+    }
+    employees.toList
   }
 
   private def sendMessage(smtpHost: String,

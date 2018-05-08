@@ -34,15 +34,9 @@ object BirthdayService {
 
   private def haveBirthday(loaded: List[Employee],
                            today: XDate): List[Employee] = {
-    import collection.mutable.ListBuffer
-    val employees = new ListBuffer[Employee]
-    for (employee <- loaded) {
-      if (employee.isBirthday(today)) {
-        employees += employee
-      }
-    }
-    employees.toList
+    loaded.filter(employee => employee.isBirthday(today))
   }
+
   private def sendMessages(smtpHost: String,
                            smtpPort: Int,
                            employees: List[Employee]): Unit = {

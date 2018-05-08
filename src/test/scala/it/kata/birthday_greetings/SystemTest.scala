@@ -2,6 +2,7 @@ package it.kata.birthday_greetings
 
 import minitest._
 import com.dumbster.smtp._
+import cats.effect._
 
 import BirthdayService._
 
@@ -18,7 +19,7 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
 
   test("will send greetings when its somebody's birthday") { mailServer =>
     implicit val employeeRepository =
-      FlatFileEmployeeRepository.fromFile("employee_data.txt")
+      FlatFileEmployeeRepository.fromFile[IO]("employee_data.txt")
     implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint("localhost", NONSTANDARD_PORT)
 
@@ -36,7 +37,7 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
 
   test("will not send emails when nobody's birthday") { mailServer =>
     implicit val employeeRepository =
-      FlatFileEmployeeRepository.fromFile("employee_data.txt")
+      FlatFileEmployeeRepository.fromFile[IO]("employee_data.txt")
     implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint("localhost", NONSTANDARD_PORT)
 

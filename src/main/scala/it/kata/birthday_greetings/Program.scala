@@ -4,7 +4,10 @@ import BirthdayService._
 
 object Program {
   def main(args: Array[String]): Unit = {
-    sendGreetings(XDate())("employee_data.txt", "localhost", 25)
+    val employeeRepository =
+      FlatFileEmployeeRepository.fromFile("employee_data.txt")
+
+    sendGreetings(XDate())(employeeRepository, "localhost", 25)
       .unsafeRunSync()
   }
 }

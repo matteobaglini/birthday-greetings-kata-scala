@@ -8,35 +8,15 @@ import cats.implicits._
 import cats.effect._
 
 object BirthdayService {
-  def sendGreetings(today: XDate)(fileName: String,
+  def sendGreetings(today: XDate)(employeeRepository: EmployeeRepository,
                                   smtpHost: String,
                                   smtpPort: Int): IO[Unit] = {
 
     for {
-      loaded <- loadEmployees()(fileName)
+      loaded <- employeeRepository.loadEmployees()
       birthdays = haveBirthday(loaded, today)
       _ <- sendMessages(birthdays)(smtpHost, smtpPort)
     } yield ()
-  }
-
-  private def loadEmployees()(fileName: String): IO[List[Employee]] = {
-    loadLines(fileName).map { lines =>
-      lines
-        .drop(1) // skip header
-        .map(parseEmployee(_))
-    }
-  }
-
-  private def loadLines(fileName: String): IO[List[String]] =
-    IO(io.Source.fromFile(fileName)).bracket { source =>
-      IO(source.getLines.toList)
-    } { source =>
-      IO(source.close)
-    }
-
-  private def parseEmployee(line: String): Employee = {
-    val employeeData = line.split(", ")
-    Employee(employeeData(1), employeeData(0), employeeData(2), employeeData(3))
   }
 
   private def haveBirthday(loaded: List[Employee],

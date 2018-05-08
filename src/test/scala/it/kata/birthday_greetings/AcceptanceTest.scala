@@ -17,12 +17,12 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will send greetings when its somebody's birthday") { mailServer =>
-    val employeeRepository =
+    implicit val employeeRepository =
       FlatFileEmployeeRepository.fromFile("employee_data.txt")
-    val messageGateway =
+    implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint("localhost", NONSTANDARD_PORT)
 
-    sendGreetings(XDate("2008/10/08"))(employeeRepository, messageGateway)
+    sendGreetings(XDate("2008/10/08"))
       .unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
@@ -35,12 +35,12 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
   }
 
   test("will not send emails when nobody's birthday") { mailServer =>
-    val employeeRepository =
+    implicit val employeeRepository =
       FlatFileEmployeeRepository.fromFile("employee_data.txt")
-    val messageGateway =
+    implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint("localhost", NONSTANDARD_PORT)
 
-    sendGreetings(XDate("2008/01/01"))(employeeRepository, messageGateway)
+    sendGreetings(XDate("2008/01/01"))
       .unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")

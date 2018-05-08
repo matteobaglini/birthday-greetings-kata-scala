@@ -4,11 +4,12 @@ import BirthdayService._
 
 object Program {
   def main(args: Array[String]): Unit = {
-    val employeeRepository =
+    implicit val employeeRepository =
       FlatFileEmployeeRepository.fromFile("employee_data.txt")
-    val messageGateway = SmtpMessageGateway.fromEndpoint("localhost", 25)
+    implicit val messageGateway =
+      SmtpMessageGateway.fromEndpoint("localhost", 25)
 
-    sendGreetings(XDate())(employeeRepository, messageGateway)
+    sendGreetings(XDate())
       .unsafeRunSync()
   }
 }

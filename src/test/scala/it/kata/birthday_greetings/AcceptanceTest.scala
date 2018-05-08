@@ -21,6 +21,7 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
                   XDate("2008/10/08"),
                   "localhost",
                   NONSTANDARD_PORT)
+      .unsafeRunSync()
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
     val message = mailServer.getReceivedEmail().next().asInstanceOf[SmtpMessage]
     assertEquals("Happy Birthday, dear John!", message.getBody)
@@ -35,6 +36,7 @@ object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
                   XDate("2008/01/01"),
                   "localhost",
                   NONSTANDARD_PORT)
+      .unsafeRunSync()
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")
   }
 }

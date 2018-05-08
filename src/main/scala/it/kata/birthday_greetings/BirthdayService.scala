@@ -11,12 +11,11 @@ object BirthdayService {
   def sendGreetings(fileName: String,
                     today: XDate,
                     smtpHost: String,
-                    smtpPort: Int): Unit = {
+                    smtpPort: Int): IO[Unit] = {
 
-    val loaded = loadEmployees(fileName).unsafeRunSync()
-    val birthdays = haveBirthday(loaded, today)
-    sendMessages(smtpHost, smtpPort, birthdays)
-      .unsafeRunSync()
+    loadEmployees(fileName)
+      .map(loaded => haveBirthday(loaded, today))
+      .flatMap(birthdays => sendMessages(smtpHost, smtpPort, birthdays))
   }
 
   private def loadEmployees(fileName: String): IO[List[Employee]] = {

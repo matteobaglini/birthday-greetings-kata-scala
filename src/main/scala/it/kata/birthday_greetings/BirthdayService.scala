@@ -23,19 +23,18 @@ object BirthdayService {
     var str = ""
     str = in.readLine // skip header
     while ({ str = in.readLine; str != null }) {
-      val employeeData = str.split(", ")
-      val employee = Employee(employeeData(1),
-                              employeeData(0),
-                              employeeData(2),
-                              employeeData(3))
-
-      employees += employee
+      employees += parseEmployee(str)
     }
     employees.toList
   }
 
+  private def parseEmployee(line: String): Employee = {
+    val employeeData = line.split(", ")
+    Employee(employeeData(1), employeeData(0), employeeData(2), employeeData(3))
+  }
+
   private def haveBirthday(loaded: List[Employee],
-                              today: XDate): List[Employee] = {
+                           today: XDate): List[Employee] = {
     import collection.mutable.ListBuffer
     val employees = new ListBuffer[Employee]
     for (employee <- loaded) {

@@ -1,8 +1,6 @@
 package it.kata.birthday_greetings
 
-import cats.effect._
+trait EmployeeRepository[F[_]] {
 
-trait EmployeeRepository {
-
-  def loadEmployees(): IO[List[Employee]]
+  def loadEmployees(): F[List[Employee]]
 }

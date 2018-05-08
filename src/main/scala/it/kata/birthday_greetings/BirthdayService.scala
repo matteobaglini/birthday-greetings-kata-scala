@@ -4,8 +4,8 @@ import cats.effect._
 
 object BirthdayService {
   def sendGreetings(today: XDate)(
-      implicit employeeRepository: EmployeeRepository,
-      messageGateway: MessageGateway): IO[Unit] = {
+      implicit employeeRepository: EmployeeRepository[IO],
+      messageGateway: MessageGateway[IO]): IO[Unit] = {
 
     for {
       loaded <- employeeRepository.loadEmployees()

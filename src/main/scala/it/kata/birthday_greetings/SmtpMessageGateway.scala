@@ -8,8 +8,8 @@ import cats.effect._
 
 object SmtpMessageGateway {
 
-  def fromEndpoint(smtpHost: String, smtpPort: Int): MessageGateway =
-    new MessageGateway {
+  def fromEndpoint(smtpHost: String, smtpPort: Int): MessageGateway[IO] =
+    new MessageGateway[IO] {
 
       def sendMessage(employee: Employee): IO[Unit] = IO {
         val session = buildSession()

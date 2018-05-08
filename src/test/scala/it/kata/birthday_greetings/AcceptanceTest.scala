@@ -7,13 +7,14 @@ import BirthdayService._
 
 object AcceptanceTest extends SimpleTestSuite {
 
-  class FakeEmployeeRepository(es: List[Employee]) extends EmployeeRepository {
+  class FakeEmployeeRepository(es: List[Employee])
+      extends EmployeeRepository[IO] {
     def loadEmployees(): IO[List[Employee]] = IO {
       es
     }
   }
 
-  class FakeMessageGateway extends MessageGateway {
+  class FakeMessageGateway extends MessageGateway[IO] {
 
     val receivers = new collection.mutable.ListBuffer[Employee]
 

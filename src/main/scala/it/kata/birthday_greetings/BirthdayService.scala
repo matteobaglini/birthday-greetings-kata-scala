@@ -1,6 +1,5 @@
 package it.kata.birthday_greetings
 
-import java.io.{BufferedReader, FileReader}
 import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
@@ -17,15 +16,11 @@ object BirthdayService {
   }
 
   private def loadEmployees(fileName: String): List[Employee] = {
-    import collection.mutable.ListBuffer
-    val employees = new ListBuffer[Employee]
-    val in = new BufferedReader(new FileReader(fileName))
-    var str = ""
-    str = in.readLine // skip header
-    while ({ str = in.readLine; str != null }) {
-      employees += parseEmployee(str)
-    }
-    employees.toList
+    val source = io.Source.fromFile(fileName)
+    val lines = source.getLines.toList
+    lines
+      .drop(1) // skip header
+      .map(parseEmployee(_))
   }
 
   private def parseEmployee(line: String): Employee = {

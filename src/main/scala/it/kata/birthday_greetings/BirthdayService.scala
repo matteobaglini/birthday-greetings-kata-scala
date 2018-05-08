@@ -41,21 +41,8 @@ object BirthdayService {
                            smtpPort: Int,
                            employees: List[Employee]): Unit = {
     for (employee <- employees) {
-      val recipient = employee.email
-      val sender = "sender@here.com"
-      val body = s"Happy Birthday, dear ${employee.firstName}!"
-      val subject = "Happy Birthday!"
-
       val session = buildSession(smtpHost, smtpPort)
-
-      // Construct the message
-      val msg = new MimeMessage(session)
-      msg.setFrom(new InternetAddress(sender))
-      msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient))
-      msg.setSubject(subject)
-      msg.setText(body);
-
-      // Send the message
+      val msg = buildMessage(session, employee)
       Transport.send(msg)
     }
   }
@@ -65,5 +52,20 @@ object BirthdayService {
     props.put("mail.smtp.host", smtpHost)
     props.put("mail.smtp.port", "" + smtpPort)
     Session.getInstance(props, null)
+  }
+
+  private def buildMessage(session: Session,
+                           employee: Employee): MimeMessage = {
+    val recipient = employee.email
+    val sender = "sender@here.com"
+    val body = s"Happy Birthday, dear ${employee.firstName}!"
+    val subject = "Happy Birthday!"
+
+    val msg = new MimeMessage(session)
+    msg.setFrom(new InternetAddress(sender))
+    msg.setRecipient(Message.RecipientType.TO, new InternetAddress(recipient))
+    msg.setSubject(subject)
+    msg.setText(body);
+    msg
   }
 }

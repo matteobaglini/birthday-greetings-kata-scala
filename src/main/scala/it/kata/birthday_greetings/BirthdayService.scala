@@ -46,12 +46,12 @@ object BirthdayService {
                            smtpPort: Int,
                            employees: List[Employee]): Unit = {
     for (employee <- employees)
-      sendMessage(smtpHost, smtpPort, employee)
+      sendMessage(smtpHost, smtpPort, employee).unsafeRunSync()
   }
 
   private def sendMessage(smtpHost: String,
                           smtpPort: Int,
-                          employee: Employee): Unit = {
+                          employee: Employee): IO[Unit] = IO {
     val session = buildSession(smtpHost, smtpPort)
     val msg = buildMessage(session, employee)
     Transport.send(msg)

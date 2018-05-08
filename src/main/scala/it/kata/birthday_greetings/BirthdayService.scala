@@ -14,7 +14,8 @@ object BirthdayService {
 
     val loaded = loadEmployees(fileName).unsafeRunSync()
     val birthdays = haveBirthday(loaded, today)
-    sendMessages(smtpHost, smtpPort, birthdays)
+    val allSend = sendMessages(smtpHost, smtpPort, birthdays)
+    allSend.foreach(_.unsafeRunSync())
   }
 
   private def loadEmployees(fileName: String): IO[List[Employee]] = {
@@ -44,9 +45,10 @@ object BirthdayService {
 
   private def sendMessages(smtpHost: String,
                            smtpPort: Int,
-                           employees: List[Employee]): Unit = {
-    for (employee <- employees)
-      sendMessage(smtpHost, smtpPort, employee).unsafeRunSync()
+                           employees: List[Employee]): List[IO[Unit]] = {
+    employees.map { employee =>
+      sendMessage(smtpHost, smtpPort, employee)
+    }
   }
 
   private def sendMessage(smtpHost: String,

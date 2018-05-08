@@ -11,7 +11,7 @@ object Program {
     implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint[IO]("localhost", 25)
 
-    sendGreetings(XDate())
+    sendGreetings[IO](XDate())
       .unsafeRunSync()
   }
 }

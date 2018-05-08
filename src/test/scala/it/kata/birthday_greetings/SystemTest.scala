@@ -23,7 +23,7 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
     implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint[IO]("localhost", NONSTANDARD_PORT)
 
-    sendGreetings(XDate("2008/10/08"))
+    sendGreetings[IO](XDate("2008/10/08"))
       .unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 1, "message not sent?")
@@ -41,7 +41,7 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
     implicit val messageGateway =
       SmtpMessageGateway.fromEndpoint[IO]("localhost", NONSTANDARD_PORT)
 
-    sendGreetings(XDate("2008/01/01"))
+    sendGreetings[IO](XDate("2008/01/01"))
       .unsafeRunSync()
 
     assert(mailServer.getReceivedEmailSize == 0, "what? messages?")

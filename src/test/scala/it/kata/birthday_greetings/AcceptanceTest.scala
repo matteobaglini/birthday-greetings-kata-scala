@@ -32,7 +32,7 @@ object AcceptanceTest extends SimpleTestSuite {
     implicit val fakeEmployeeRepository = new FakeEmployeeRepository(employees)
     implicit val fakeMessageGateway = new FakeMessageGateway()
 
-    sendGreetings(today)
+    sendGreetings[IO](today)
       .unsafeRunSync()
 
     assert(fakeMessageGateway.receivers.size == 1, "message not sent?")
@@ -48,7 +48,7 @@ object AcceptanceTest extends SimpleTestSuite {
     implicit val fakeEmployeeRepository = new FakeEmployeeRepository(employees)
     implicit val fakeMessageGateway = new FakeMessageGateway()
 
-    sendGreetings(today)
+    sendGreetings[IO](today)
       .unsafeRunSync()
 
     assert(fakeMessageGateway.receivers.size == 0, "what? messages?")

@@ -13,9 +13,11 @@ object BirthdayService {
                     smtpHost: String,
                     smtpPort: Int): IO[Unit] = {
 
-    loadEmployees(fileName)
-      .map(loaded => haveBirthday(loaded, today))
-      .flatMap(birthdays => sendMessages(smtpHost, smtpPort, birthdays))
+    for {
+      loaded <- loadEmployees(fileName)
+      birthdays = haveBirthday(loaded, today)
+      _ <- sendMessages(smtpHost, smtpPort, birthdays)
+    } yield ()
   }
 
   private def loadEmployees(fileName: String): IO[List[Employee]] = {

@@ -5,9 +5,8 @@ import cats.effect._
 
 trait MessageGateway {
 
-  def sendMessages(employees: List[Employee]): IO[Unit] = {
+  def sendMessages(employees: List[Employee]): IO[Unit] =
     employees.traverse_(sendMessage(_))
-  }
 
   def sendMessage(employee: Employee): IO[Unit]
 }

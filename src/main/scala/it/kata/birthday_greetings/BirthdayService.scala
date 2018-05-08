@@ -46,10 +46,12 @@ object BirthdayService {
 
   private def sendMessages(smtpHost: String,
                            smtpPort: Int,
-                           employees: List[Employee]): IO[List[Unit]] = {
-    employees.traverse { employee =>
-      sendMessage(smtpHost, smtpPort, employee)
-    }
+                           employees: List[Employee]): IO[Unit] = {
+    employees
+      .traverse { employee =>
+        sendMessage(smtpHost, smtpPort, employee)
+      }
+      .map(_ => ())
   }
 
   private def sendMessage(smtpHost: String,

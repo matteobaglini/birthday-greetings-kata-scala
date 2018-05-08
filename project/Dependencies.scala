@@ -6,4 +6,8 @@ object Dependencies {
 
   lazy val miniTest = "io.monix" %% "minitest" % "2.1.1"
   lazy val dumbster = "dumbster" % "dumbster" % "1.6"
+
+  lazy val catsCore = "org.typelevel" %% "cats-core" % "1.1.0"
+  lazy val catsEffect = "org.typelevel" %% "cats-effect" % "1.0.0-RC"
+  lazy val catsMtl = "org.typelevel" %% "cats-mtl-core" % "0.2.1"
 }

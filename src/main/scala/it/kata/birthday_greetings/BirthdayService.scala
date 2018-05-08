@@ -40,11 +40,16 @@ object BirthdayService {
   private def sendMessages(smtpHost: String,
                            smtpPort: Int,
                            employees: List[Employee]): Unit = {
-    for (employee <- employees) {
-      val session = buildSession(smtpHost, smtpPort)
-      val msg = buildMessage(session, employee)
-      Transport.send(msg)
-    }
+    for (employee <- employees)
+      sendMessage(smtpHost, smtpPort, employee)
+  }
+
+  private def sendMessage(smtpHost: String,
+                          smtpPort: Int,
+                          employee: Employee): Unit = {
+    val session = buildSession(smtpHost, smtpPort)
+    val msg = buildMessage(session, employee)
+    Transport.send(msg)
   }
 
   private def buildSession(smtpHost: String, smtpPort: Int): Session = {

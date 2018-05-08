@@ -16,11 +16,15 @@ object BirthdayService {
   }
 
   private def loadEmployees(fileName: String): List[Employee] = {
-    val source = io.Source.fromFile(fileName)
-    val lines = source.getLines.toList
-    lines
+    loadLines(fileName)
       .drop(1) // skip header
       .map(parseEmployee(_))
+  }
+
+  private def loadLines(fileName: String): List[String] = {
+    val source = io.Source.fromFile(fileName)
+    try source.getLines.toList
+    finally source.close
   }
 
   private def parseEmployee(line: String): Employee = {

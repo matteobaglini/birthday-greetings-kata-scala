@@ -8,10 +8,11 @@ import cats.effect._
 
 object SmtpMessageGateway {
 
-  def fromEndpoint(smtpHost: String, smtpPort: Int): MessageGateway[IO] =
-    new MessageGateway[IO] {
+  def fromEndpoint[F[_]](smtpHost: String, smtpPort: Int)(
+      implicit S: Sync[F]): MessageGateway[F] =
+    new MessageGateway[F] {
 
-      def sendMessage(employee: Employee): IO[Unit] = IO {
+      def sendMessage(employee: Employee): F[Unit] = S.delay {
         val session = buildSession()
         val msg = buildMessage(session, employee)
         Transport.send(msg)

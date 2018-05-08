@@ -21,7 +21,7 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
     implicit val employeeRepository =
       FlatFileEmployeeRepository.fromFile[IO]("employee_data.txt")
     implicit val messageGateway =
-      SmtpMessageGateway.fromEndpoint("localhost", NONSTANDARD_PORT)
+      SmtpMessageGateway.fromEndpoint[IO]("localhost", NONSTANDARD_PORT)
 
     sendGreetings(XDate("2008/10/08"))
       .unsafeRunSync()
@@ -39,7 +39,7 @@ object SystemTest extends TestSuite[SimpleSmtpServer] {
     implicit val employeeRepository =
       FlatFileEmployeeRepository.fromFile[IO]("employee_data.txt")
     implicit val messageGateway =
-      SmtpMessageGateway.fromEndpoint("localhost", NONSTANDARD_PORT)
+      SmtpMessageGateway.fromEndpoint[IO]("localhost", NONSTANDARD_PORT)
 
     sendGreetings(XDate("2008/01/01"))
       .unsafeRunSync()

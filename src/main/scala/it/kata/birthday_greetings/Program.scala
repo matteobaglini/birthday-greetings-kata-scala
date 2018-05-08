@@ -9,7 +9,7 @@ object Program {
     implicit val employeeRepository =
       FlatFileEmployeeRepository.fromFile[IO]("employee_data.txt")
     implicit val messageGateway =
-      SmtpMessageGateway.fromEndpoint("localhost", 25)
+      SmtpMessageGateway.fromEndpoint[IO]("localhost", 25)
 
     sendGreetings(XDate())
       .unsafeRunSync()

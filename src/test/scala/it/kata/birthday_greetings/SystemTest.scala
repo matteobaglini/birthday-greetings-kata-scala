@@ -5,7 +5,7 @@ import com.dumbster.smtp._
 
 import BirthdayService._
 
-object AcceptanceTest extends TestSuite[SimpleSmtpServer] {
+object SystemTest extends TestSuite[SimpleSmtpServer] {
   private val NONSTANDARD_PORT = 555
 
   def setup(): SimpleSmtpServer = {

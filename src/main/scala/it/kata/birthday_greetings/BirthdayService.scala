@@ -46,11 +46,7 @@ object BirthdayService {
       val body = s"Happy Birthday, dear ${employee.firstName}!"
       val subject = "Happy Birthday!"
 
-      // Create a mail session
-      val props = new Properties
-      props.put("mail.smtp.host", smtpHost)
-      props.put("mail.smtp.port", "" + smtpPort)
-      val session = Session.getInstance(props, null)
+      val session = buildSession(smtpHost, smtpPort)
 
       // Construct the message
       val msg = new MimeMessage(session)
@@ -62,5 +58,12 @@ object BirthdayService {
       // Send the message
       Transport.send(msg)
     }
+  }
+
+  private def buildSession(smtpHost: String, smtpPort: Int): Session = {
+    val props = new Properties
+    props.put("mail.smtp.host", smtpHost)
+    props.put("mail.smtp.port", "" + smtpPort)
+    Session.getInstance(props, null)
   }
 }

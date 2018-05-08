@@ -4,7 +4,8 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
-import cats.effect.IO
+import cats.implicits._
+import cats.effect._
 
 object BirthdayService {
   def sendGreetings(fileName: String,
@@ -14,8 +15,8 @@ object BirthdayService {
 
     val loaded = loadEmployees(fileName).unsafeRunSync()
     val birthdays = haveBirthday(loaded, today)
-    val allSend = sendMessages(smtpHost, smtpPort, birthdays)
-    allSend.foreach(_.unsafeRunSync())
+    sendMessages(smtpHost, smtpPort, birthdays)
+      .unsafeRunSync()
   }
 
   private def loadEmployees(fileName: String): IO[List[Employee]] = {
@@ -45,8 +46,8 @@ object BirthdayService {
 
   private def sendMessages(smtpHost: String,
                            smtpPort: Int,
-                           employees: List[Employee]): List[IO[Unit]] = {
-    employees.map { employee =>
+                           employees: List[Employee]): IO[List[Unit]] = {
+    employees.traverse { employee =>
       sendMessage(smtpHost, smtpPort, employee)
     }
   }

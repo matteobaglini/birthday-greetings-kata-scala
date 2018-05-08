@@ -4,6 +4,8 @@ import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
 
+import cats.effect.IO
+
 object BirthdayService {
   def sendGreetings(fileName: String,
                     today: XDate,
@@ -17,15 +19,17 @@ object BirthdayService {
 
   private def loadEmployees(fileName: String): List[Employee] = {
     loadLines(fileName)
+      .unsafeRunSync()
       .drop(1) // skip header
       .map(parseEmployee(_))
   }
 
-  private def loadLines(fileName: String): List[String] = {
-    val source = io.Source.fromFile(fileName)
-    try source.getLines.toList
-    finally source.close
-  }
+  private def loadLines(fileName: String): IO[List[String]] =
+    IO(io.Source.fromFile(fileName)).bracket { source =>
+      IO(source.getLines.toList)
+    } { source =>
+      IO(source.close)
+    }
 
   private def parseEmployee(line: String): Employee = {
     val employeeData = line.split(", ")

@@ -4,7 +4,6 @@ import java.io.{BufferedReader, FileReader}
 import java.util.Properties
 import javax.mail.internet.{InternetAddress, MimeMessage}
 import javax.mail.{Message, Session, Transport}
-import collection.mutable.ListBuffer
 
 object BirthdayService {
   def sendGreetings(fileName: String,
@@ -18,6 +17,7 @@ object BirthdayService {
   }
 
   private def loadEmployees(fileName: String): List[Employee] = {
+    import collection.mutable.ListBuffer
     val employees = new ListBuffer[Employee]
     val in = new BufferedReader(new FileReader(fileName))
     var str = ""
@@ -36,6 +36,7 @@ object BirthdayService {
 
   private def haveBirthday(loaded: List[Employee],
                               today: XDate): List[Employee] = {
+    import collection.mutable.ListBuffer
     val employees = new ListBuffer[Employee]
     for (employee <- loaded) {
       if (employee.isBirthday(today)) {

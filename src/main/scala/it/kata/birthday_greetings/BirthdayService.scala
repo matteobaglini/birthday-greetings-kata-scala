@@ -8,19 +8,18 @@ import cats.implicits._
 import cats.effect._
 
 object BirthdayService {
-  def sendGreetings(fileName: String,
-                    today: XDate,
-                    smtpHost: String,
-                    smtpPort: Int): IO[Unit] = {
+  def sendGreetings(today: XDate)(fileName: String,
+                                  smtpHost: String,
+                                  smtpPort: Int): IO[Unit] = {
 
     for {
-      loaded <- loadEmployees(fileName)
+      loaded <- loadEmployees()(fileName)
       birthdays = haveBirthday(loaded, today)
-      _ <- sendMessages(smtpHost, smtpPort, birthdays)
+      _ <- sendMessages(birthdays)(smtpHost, smtpPort)
     } yield ()
   }
 
-  private def loadEmployees(fileName: String): IO[List[Employee]] = {
+  private def loadEmployees()(fileName: String): IO[List[Employee]] = {
     loadLines(fileName).map { lines =>
       lines
         .drop(1) // skip header
@@ -45,18 +44,16 @@ object BirthdayService {
     loaded.filter(employee => employee.isBirthday(today))
   }
 
-  private def sendMessages(smtpHost: String,
-                           smtpPort: Int,
-                           employees: List[Employee]): IO[Unit] = {
+  private def sendMessages(
+      employees: List[Employee])(smtpHost: String, smtpPort: Int): IO[Unit] = {
     employees
       .traverse_ { employee =>
-        sendMessage(smtpHost, smtpPort, employee)
+        sendMessage(employee)(smtpHost, smtpPort)
       }
   }
 
-  private def sendMessage(smtpHost: String,
-                          smtpPort: Int,
-                          employee: Employee): IO[Unit] = IO {
+  private def sendMessage(employee: Employee)(smtpHost: String,
+                                              smtpPort: Int): IO[Unit] = IO {
     val session = buildSession(smtpHost, smtpPort)
     val msg = buildMessage(session, employee)
     Transport.send(msg)
